@@ -96,11 +96,12 @@
 <meta property="og:description" content="前言最近分析线上日志，发现存在一定量的OutOfMemoryError。由于Android系统对堆内存大小作了限制，不同的设备上这个阈值也会不同，当已分配内存加新分配内存大于堆内存就会导致OOM。虽然Android机型的配置在不断升级，但还是存在着几年前的旧机型，它们的特点是内存小，尤其在涉及大图片加载时很容易出现OOM。
 概述为了避免OOM，程序应该增加可用内存，并及时回收不再使用的对象，降低内">
 <meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/photocache/%E8%BD%AF%E5%BC%95%E7%94%A8%E5%BC%8A%E7%AB%AF.jpg">
+<meta property="og:image" content="http://yoursite.com/images/photocache/lru缓存.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/photocache/%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/photocache/lru%E7%BC%93%E5%AD%98.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/photocache/%E4%BC%98%E5%8C%96%E5%89%8D.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/photocache/%E4%BC%98%E5%8C%96%E5%90%8E.jpg">
-<meta property="og:updated_time" content="2017-04-22T09:05:00.000Z">
+<meta property="og:updated_time" content="2017-04-22T09:16:04.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android图片缓存分析与优化">
 <meta name="twitter:description" content="前言最近分析线上日志，发现存在一定量的OutOfMemoryError。由于Android系统对堆内存大小作了限制，不同的设备上这个阈值也会不同，当已分配内存加新分配内存大于堆内存就会导致OOM。虽然Android机型的配置在不断升级，但还是存在着几年前的旧机型，它们的特点是内存小，尤其在涉及大图片加载时很容易出现OOM。
@@ -359,6 +360,7 @@
 <p>使用缩略图来提高加载速度和降低内存占用。根据控件大小对图片进行裁剪，减少不必要内存浪费。我们的项目中使用了NOS提供的图片处理服务，它提供了非常强大的云处理功能，在开发过程中根据实际需要生成请求链接，获取不同尺寸的图片，实现图片裁剪。同时使用BitmapFactory.Options属性，通过设置采样率, 减少Bitmap的像素。</p>
 <p><strong>2、内存引用上做一些处理，常用的有软引用。</strong></p>
 <p>使用软引用的对象在内存足够时，垃圾回收器不会回收它；当内存空间不足时，为满足程序运行的需求，会回收这些对象，避免出现OOM导致的程序崩溃。因此只要对象没有被回收都能被程序使用。过去很多应用都大量使用软引用进行图片缓存，通过GC自动回收图片所占内存。下图是谷歌对图片缓存的说明：<br><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/photocache/%E8%BD%AF%E5%BC%95%E7%94%A8%E5%BC%8A%E7%AB%AF.jpg" alt="软引用"></p>
+<p><img src="/images/photocache/lru缓存.jpg" alt="软引用"></p>
 <p>从上图可以看出，从Android 2. 3开始，垃圾回收器会更倾向于回收持有软引用或弱引用的对象，这让软引用和弱引用变得不再可靠。另外，在Android 3.0中，图片的数据会存储在本地的内存当中，因而无法用一种可预见的方式将其释放，这就有潜在的风险造成应用程序的内存溢出并崩溃，所以在开发过程中要谨慎使用。</p>
 <p><strong>3、缓存机制。</strong></p>
 <p>缓存不仅可以减少流量的浪费还能防止加载过多的图片，项目中使用了比较主流的内存、文件和网络三级缓存。</p>
