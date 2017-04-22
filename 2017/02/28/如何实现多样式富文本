@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Java,code," />
+  <meta name="keywords" content="富文本,Spannable," />
 
 
 
@@ -87,22 +87,22 @@
 
 
 
-<meta name="description" content="前言为了保证团队内部代码风格的统一，提升代码的质量，更好的遵循标准的编写规范。必须定义一个统一的规范，在执行上前期主要由团队的老司机进行codereview，并对review出来的问题进行总结和回顾，避免后期犯类似的错误。但是这样会加大老司机的工作量，降低整个团队的工作效率，如果项目周期比较赶可能会放松对代码的要求。因此，有必要引入自动化工具来帮助我们保证代码的质量，这里主要采用两种办法：
-
-co">
+<meta name="description" content="前言项目中需要使用富文本来显示消息通知，由于消息的类型多达几十种，且这些不同类型消息显示的文案由服务端控制，这里文案需要使用富文本来显示不同颜色、大小、字体的文字，所幸是textView支持富文本显示。具体实现方法有两种。
+使用HTML 标记设置样式将待显示字符串添加到strings文件中。例如：
+&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;ut">
 <meta property="og:type" content="article">
-<meta property="og:title" content="代码规范检查">
-<meta property="og:url" content="http://yoursite.com/2017/03/16/代码规范检查/index.html">
+<meta property="og:title" content="如何实现多样式富文本?">
+<meta property="og:url" content="http://yoursite.com/2017/02/28/如何实现多样式富文本">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="前言为了保证团队内部代码风格的统一，提升代码的质量，更好的遵循标准的编写规范。必须定义一个统一的规范，在执行上前期主要由团队的老司机进行codereview，并对review出来的问题进行总结和回顾，避免后期犯类似的错误。但是这样会加大老司机的工作量，降低整个团队的工作效率，如果项目周期比较赶可能会放松对代码的要求。因此，有必要引入自动化工具来帮助我们保证代码的质量，这里主要采用两种办法：
-
-co">
-<meta property="og:updated_time" content="2017-04-22T07:54:53.000Z">
+<meta property="og:description" content="前言项目中需要使用富文本来显示消息通知，由于消息的类型多达几十种，且这些不同类型消息显示的文案由服务端控制，这里文案需要使用富文本来显示不同颜色、大小、字体的文字，所幸是textView支持富文本显示。具体实现方法有两种。
+使用HTML 标记设置样式将待显示字符串添加到strings文件中。例如：
+&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;ut">
+<meta property="og:updated_time" content="2017-04-22T11:08:25.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="代码规范检查">
-<meta name="twitter:description" content="前言为了保证团队内部代码风格的统一，提升代码的质量，更好的遵循标准的编写规范。必须定义一个统一的规范，在执行上前期主要由团队的老司机进行codereview，并对review出来的问题进行总结和回顾，避免后期犯类似的错误。但是这样会加大老司机的工作量，降低整个团队的工作效率，如果项目周期比较赶可能会放松对代码的要求。因此，有必要引入自动化工具来帮助我们保证代码的质量，这里主要采用两种办法：
-
-co">
+<meta name="twitter:title" content="如何实现多样式富文本?">
+<meta name="twitter:description" content="前言项目中需要使用富文本来显示消息通知，由于消息的类型多达几十种，且这些不同类型消息显示的文案由服务端控制，这里文案需要使用富文本来显示不同颜色、大小、字体的文字，所幸是textView支持富文本显示。具体实现方法有两种。
+使用HTML 标记设置样式将待显示字符串添加到strings文件中。例如：
+&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;ut">
 
 
 
@@ -130,13 +130,13 @@ co">
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/03/16/代码规范检查/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/02/28/如何实现多样式富文本"/>
 
 
 
 
 
-  <title> 代码规范检查 | 个人博客 </title>
+  <title> 如何实现多样式富文本? | 个人博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -253,7 +253,7 @@ co">
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/16/代码规范检查/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/28/如何实现多样式富文本?/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="潘威">
@@ -277,7 +277,7 @@ co">
             
             
               
-                代码规范检查
+                如何实现多样式富文本?
               
             
           </h1>
@@ -292,8 +292,8 @@ co">
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-03-16T19:03:56+08:00">
-                2017-03-16
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-02-28T12:55:55+08:00">
+                2017-02-28
               </time>
             
 
@@ -350,75 +350,131 @@ co">
       
 
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>为了保证团队内部代码风格的统一，提升代码的质量，更好的遵循标准的编写规范。必须定义一个统一的规范，在执行上前期主要由团队的老司机进行codereview，并对review出来的问题进行总结和回顾，避免后期犯类似的错误。但是这样会加大老司机的工作量，降低整个团队的工作效率，如果项目周期比较赶可能会放松对代码的要求。因此，有必要引入自动化工具来帮助我们保证代码的质量，这里主要采用两种办法：</p>
-<ul>
-<li><p><strong>coding阶段</strong>：为IDE配置统一的格式化模板，在完成开发后手动进行format。具体配置方式参见<a href="http://note.youdao.com/groupshare/?token=A0EFFF04E19246089EAFACD7A818FEF0&amp;gid=30539562" target="_blank" rel="external">Android端Code Style统一规范</a></p>
-</li>
-<li><p><strong>build阶段</strong>：使用checkstyle工具检查代码，注释、命名规范、方法长度、空格缩进等不再需要手工检查，由于标准的check过于严格，可以根据实际情况取消部分检查规则。对于不符合规范的代码，警告或者错误提示。</p>
-</li>
-</ul>
-<h1 id="Checkstyle配置"><a href="#Checkstyle配置" class="headerlink" title="Checkstyle配置"></a>Checkstyle配置</h1><p>具体的配置步骤：</p>
-<p>1、将自定义的checkstyle.xml文件放在项目/setting目录下.</p>
-<p>2、添加checkstyle任务，并配置检查项目。</p>
-<pre><code>allprojects{
-   repositories{ 
-         jcenter()
- }
- task checkstyle(type: Checkstyle) {
-       showViolations = true
-       configFile file(&quot;../settings/checkstyle.xml&quot;)
-       source &apos;src/main/java&apos;//检查Java代码
-       include &apos;**/*.java&apos;  //不检查
-       exclude &apos;**/gen/**&apos;
-       exclude &apos;**/R.java&apos;
-       exclude &apos;**/BuildConfig.java&apos;
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>项目中需要使用富文本来显示消息通知，由于消息的类型多达几十种，且这些不同类型消息显示的文案由服务端控制，这里文案需要使用富文本来显示不同颜色、大小、字体的文字，所幸是textView支持富文本显示。具体实现方法有两种。</p>
+<h2 id="使用HTML-标记设置样式"><a href="#使用HTML-标记设置样式" class="headerlink" title="使用HTML 标记设置样式"></a>使用HTML 标记设置样式</h2><p>将待显示字符串添加到strings文件中。例如：</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;resources&gt;
+    &lt;string name=&quot;welcome&quot;&gt;Welcome to&lt;b&gt;Android&lt;/b&gt;!&lt;/string&gt;
+&lt;/resources&gt;
+</code></pre><p>支持的 HTML 标签包括：</p>
+<pre><code>&lt;a href=&quot;...&quot;&gt;创建超文本链接
 
-       // empty classpath
-       classpath = files()
-       ignoreFailures true     // 忽略检查失败的情况，避免gradle命令执行中止
+&lt;b&gt;黑体字
+
+&lt;big&gt;字体加大
+
+&lt;blockquote&gt;从两边缩进文本
+
+&lt;br&gt;换行插入换行符
+
+&lt;cite&gt;引用，通常是斜体
+
+&lt;dfn&gt;述语定义
+
+&lt;div align=&quot;...&quot;&gt;用来排版大块HTML段落,也用于格式化表
+
+&lt;em&gt;强调文本(通常是斜体加黑体)
+
+&lt;font size=&quot;...&quot; color=&quot;...&quot;face=&quot;...&quot;&gt;设置字体大小从1到7，颜色使用名字或RGB的十六进制值
+
+&lt;h1&gt;至&lt;h6&gt;标题
+
+&lt;i&gt;斜体字
+
+&lt;img src=&quot;...&quot;&gt;图片
+
+&lt;p&gt;创建一个段落
+
+&lt;small&gt;字体缩小
+
+&lt;strike&gt;加删除线
+
+&lt;strong&gt;加重文本(通常是斜体加黑体)
+
+&lt;sub&gt;下标字
+
+&lt;sup&gt;上标字
+
+&lt;tt&gt;打字机风格的字体
+
+&lt;u&gt;下划线
+</code></pre><p>如果将带样式文本资源作为格式字符串。 正常情况下是行不通的，因为 String.format(String,Object…) 方法会去除字符串中的所有样式信息。要解决这个问题只能编写带转义实体的 HTML 标签，在完成格式设置后，这些实体可通过fromHtml(String) 恢复。 例如：</p>
+<p><strong>1.将您带样式的文本资源存储为HTML 转义字符串：</strong></p>
+<pre><code>&lt;resources&gt;
+  &lt;string name=&quot;welcome_messages&quot;&gt;Hello, %1$s! You have &amp;lt;b&gt;%2$d newmessages&amp;lt;/b&gt;.&lt;/string&gt;
+&lt;/resources&gt;
+</code></pre><p>在这个带格式的字符串中，添加了 \<b> 元素。请注意，开括号使用 \&lt; 表示法进行了 HTML 转义。</b></p>
+<p><strong>2.然后照常设置字符串格式，但还要调用 <a href="https://developer.android.com/reference/android/text/Html.html#fromHtml(java.lang.String" target="_blank" rel="external">fromHtml(String)</a>) 以将HTML 文本转换成带样式文本：</strong></p>
+<pre><code>Resources res = getResources();
+String text =String.format(res.getString(R.string.welcome_messages), username, mailCount);
+CharSequence styledText = Html.fromHtml(text);
+</code></pre><p>由于 fromHtml(String) 方法将设置所有 HTML 实体的格式，因此务必要使用 htmlEncode(String) 对您用于带格式文本的字符串中任何可能的 HTML 字符进行转义。 例如，如果您向 String.format() 传递的字符串参数可能包含“&lt;”或“&amp;”之类的字符，则必须在设置格式前进行转义，这样在通过 fromHtml(String) 传递带格式字符串时，字符就能以原始形式显示出来。 例如：</p>
+<pre><code>String escapedUsername = TextUtil.htmlEncode(username);
+Resources res =getResources();
+String text =String.format(res.getString(R.string.welcome_messages), escapedUsername, mailCount);
+CharSequence styledText = Html.fromHtml(text);
+</code></pre><h2 id="使用Spannable-设置样式"><a href="#使用Spannable-设置样式" class="headerlink" title="使用Spannable 设置样式"></a>使用Spannable 设置样式</h2><p><a href="https://developer.android.com/reference/android/text/Spannable.html" target="_blank" rel="external">Spannable</a>可以对颜色和字体粗细等属性进行样式设置。 首先使用 SpannableStringBuilder 构造文本内容，然后为文本设置 android.text.style 包中定义的样式，常见的样式有StrikethroughSpan、StyleSpan、ForegroundColorSpan等。例如，为某段文字内容加上带颜色和删除线的粗体样式。</p>
+<pre><code>public CharSequence renderSpan(Stringtext, String color, boolean isBold, boolean isDelete) {
+    if(TextUtils.isEmpty(color)) {
+        color =&quot;#272934&quot;;//默认值
+    }
+    if(TextUtils.isEmpty(text)) {
+        return null;
+    }
+   SpannableStringBuilder span = new SpannableStringBuilder();
+   span.append(text);
+    if(isDelete) {
+        StrikethroughSpanstrikethroughSpan = new StrikethroughSpan();
+        span.setSpan(strikethroughSpan,0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+    if (isBold){
+        StyleSpanboldStyle = new StyleSpan(Typeface.BOLD);
+        span.setSpan(boldStyle,0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+    span.setSpan(newForegroundColorSpan(Color.parseColor(color)), 0,text.length(),Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    returnspan;
+</code></pre><p>}</p>
+<p>最后，项目中用到了格式化字符串，所以只能采取第一种方式来避免样式信息被清除。这里遇到一个非常奇葩的坑， fromHtml(String)无法正常显示带\<strike>标签的格式。解决办法是结合使用spannable，如下：</strike></p>
+<pre><code>public CharSequence renderSpan(String text,String color, boolean isBold, boolean isDelete) {
+   if(TextUtils.isEmpty(color)) {
+       color =&quot;#272934&quot;;
    }
+   if(TextUtils.isEmpty(text)) {
+       returnspan;
+   }
+   SpannableStringBuilder span = new SpannableStringBuilder();
+   span.append(text);
+   if(isDelete) {
+      span.insert(0, &quot;&lt;strike&gt;&quot;);
+      span.append(&quot;&lt;/strike&gt;&quot;);
+   }
+   if (isBold){
+      span.insert(0, &quot;&lt;b&gt;&quot;);
+      span.append(&quot;&lt;/b&gt;&quot;);
+   }
+  //span.insert(0, &quot;&lt;font color=\&quot;&quot; + color +&quot;\&quot;&gt;&quot;);
+  //span.append(&quot;&lt;/font&gt;&quot;);
+   return span;
 }
-</code></pre><p>3、在module的build.gradle中添加checkstyle插件，并声明checkstyle任务的执行条件。</p>
-<pre><code>apply plugin: &apos;checkstyle&apos;
 
-preBuild.dependsOn(&apos;checkstyle&apos;)
-assemble.dependsOn(&apos;lint&apos;)
-check.dependsOn(&apos;checkstyle&apos;)
-</code></pre><p>4、在终端中执行如下命令，可在/app/build/reports中看到生成的警示报告文件。</p>
-<pre><code>./gradlew checkstyle 
-</code></pre><h1 id="自定义xml配置文件"><a href="#自定义xml配置文件" class="headerlink" title="自定义xml配置文件"></a>自定义xml配置文件</h1><p>IDE的Code Style Format包括如下几个部分：</p>
-<ul>
-<li>Tabs and Indents</li>
-<li>Spaces</li>
-<li>Wrapping and braces</li>
-<li>Blank lines</li>
-<li>JavaDoc</li>
-<li>Arrangement</li>
-<li>Imports</li>
-<li>Code Generation</li>
-</ul>
-<p>可以直接在IntelliJ IDEA中勾选设置，然后导出配置文件，共享给团队成员。但它只能对代码的格式进行自动调整，无法检查代码的问题和错误。Checkstyle插件是在format的基础上，对代码的格式和语法进行检查和分析，包括下面几大类型：</p>
-<ul>
-<li>Javadoc Comments </li>
-<li>Naming Conventions</li>
-<li>Imports</li>
-<li>Size Violations</li>
-<li>Whitespace</li>
-<li>ModifierOrder</li>
-<li>Block Checks</li>
-<li>Coding</li>
-<li>Class Design</li>
-<li>Duplicate Code</li>
-<li>Miscellaneous</li>
-</ul>
-<p>根据项目实际情况，主要对Javadoc注释、命名规范、import语句、代码块、缩进和空行以及风格、类设计、重复代码等分析规则进行配置。<br>具体配置文件如下<a href="https://github.com/checkstyle/checkstyle/blob/master/config/checkstyle_checks.xml" target="_blank" rel="external">checkstyle.xml</a></p>
-<blockquote>
-<p>这里参照了官方提供的配置文件<a href="https://github.com/checkstyle/checkstyle/blob/master/config/checkstyle_checks.xml" target="_blank" rel="external">checkstyle_checks.xml</a>，并加以详细的注释，可根据实际需求添加或移除module。</p>
-</blockquote>
-<h1 id="自定义文件说明"><a href="#自定义文件说明" class="headerlink" title="自定义文件说明"></a>自定义文件说明</h1><p>Checkstyle配置文件通过指定modules应用到java文件。modules是树状结构，以一个名为Checker的module作为root节点，一般的checker都会包括TreeWalker子module。</p>
-<blockquote>
-<p>xml配置文件中通过module的name属性来区分module，module的Properties可以控制如何去执行这个module，每个property都有一个默认值，所有的check都有一个severity属性，用它来指定check的level。TreeWalker为每个java文件创建一个语法树，在节点之间调用submodules的Checks。</p>
-</blockquote>
+
+
+
+   Resources res = getResources();
+   String text = String.format(res.getString(R.string.welcome_messages),renderSpan(escapedUsername ,&quot;&quot;,true,true));    
+   SpannableStringBuilder operateStr =new  SpannableStringBuilder(text);
+   Object[]spans = operateStr.getSpans(0, operateStr.length(), Object.class);
+   if (spans.length &gt; 0) {
+       for(Object object : spans) {
+           intstart = operateStr.getSpanStart(object);
+           intend = operateStr.getSpanEnd(object);
+           StrikethroughSpan strikethroughSpan = new StrikethroughSpan();
+           operateStr.setSpan(strikethroughSpan, start, end,Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+           break;
+       }
+
+   }
+</code></pre><p>这里通过其他span对象来确定样式字符串的位置，然后采用第二种方式进行处理。</p>
 
       
     </div>
@@ -442,9 +498,9 @@ check.dependsOn(&apos;checkstyle&apos;)
       
         <div class="post-tags">
           
-            <a href="/tags/Java/" rel="tag"># Java</a>
+            <a href="/tags/富文本/" rel="tag"># 富文本</a>
           
-            <a href="/tags/code/" rel="tag"># code</a>
+            <a href="/tags/Spannable/" rel="tag"># Spannable</a>
           
         </div>
       
@@ -457,8 +513,8 @@ check.dependsOn(&apos;checkstyle&apos;)
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/02/28/如何实现多样式富文本?/" rel="next" title="如何实现多样式富文本?">
-                <i class="fa fa-chevron-left"></i> 如何实现多样式富文本?
+              <a href="/2017/02/22/Android图片缓存分析与优化/" rel="next" title="Android图片缓存分析与优化">
+                <i class="fa fa-chevron-left"></i> Android图片缓存分析与优化
               </a>
             
           </div>
@@ -467,8 +523,8 @@ check.dependsOn(&apos;checkstyle&apos;)
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/03/28/打造一个通用Adapter/" rel="prev" title="打造一个通用Adapter">
-                打造一个通用Adapter <i class="fa fa-chevron-right"></i>
+              <a href="/2017/03/16/代码规范检查/" rel="prev" title="代码规范检查">
+                代码规范检查 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -592,7 +648,7 @@ check.dependsOn(&apos;checkstyle&apos;)
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Checkstyle配置"><span class="nav-number">2.</span> <span class="nav-text">Checkstyle配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自定义xml配置文件"><span class="nav-number">3.</span> <span class="nav-text">自定义xml配置文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自定义文件说明"><span class="nav-number">4.</span> <span class="nav-text">自定义文件说明</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用HTML-标记设置样式"><span class="nav-number">2.</span> <span class="nav-text">使用HTML 标记设置样式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用Spannable-设置样式"><span class="nav-number">3.</span> <span class="nav-text">使用Spannable 设置样式</span></a></li></ol></div>
             
 
           </div>
