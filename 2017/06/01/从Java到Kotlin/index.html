@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Java,code," />
+  <meta name="keywords" content="Java,Kotlin," />
 
 
 
@@ -87,22 +87,19 @@
 
 
 
-<meta name="description" content="前言为了保证团队内部代码风格的统一，提升代码的质量，更好的遵循标准的编写规范。必须定义一个统一的规范，在执行上前期主要由团队的老司机进行codereview，并对review出来的问题进行总结和回顾，避免后期犯类似的错误。但是这样会加大老司机的工作量，降低整个团队的工作效率，如果项目周期比较赶可能会放松对代码的要求。因此，有必要引入自动化工具来帮助我们保证代码的质量，这里主要采用两种办法：
-
-co">
+<meta name="description" content="Kotlin是什么今年Google I/O 大会正式确立了Kotlin的地位，作为一名Android开发者，一定要紧跟Google的步伐。
+Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码高度相似。语法上和Groovy、Javascript都很类似，非常容易上手。——IntelliJ IDEA由JetBrains开发(Android Studio基于它的插件实现) ，Kotl">
 <meta property="og:type" content="article">
-<meta property="og:title" content="代码规范检查">
-<meta property="og:url" content="http://yoursite.com/2017/03/16/代码规范检查/index.html">
+<meta property="og:title" content="从Java到Kotlin">
+<meta property="og:url" content="http://yoursite.com/2017/06/01/从Java到Kotlin/index.html">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="前言为了保证团队内部代码风格的统一，提升代码的质量，更好的遵循标准的编写规范。必须定义一个统一的规范，在执行上前期主要由团队的老司机进行codereview，并对review出来的问题进行总结和回顾，避免后期犯类似的错误。但是这样会加大老司机的工作量，降低整个团队的工作效率，如果项目周期比较赶可能会放松对代码的要求。因此，有必要引入自动化工具来帮助我们保证代码的质量，这里主要采用两种办法：
-
-co">
-<meta property="og:updated_time" content="2017-04-22T07:54:53.000Z">
+<meta property="og:description" content="Kotlin是什么今年Google I/O 大会正式确立了Kotlin的地位，作为一名Android开发者，一定要紧跟Google的步伐。
+Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码高度相似。语法上和Groovy、Javascript都很类似，非常容易上手。——IntelliJ IDEA由JetBrains开发(Android Studio基于它的插件实现) ，Kotl">
+<meta property="og:updated_time" content="2017-06-01T11:04:49.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="代码规范检查">
-<meta name="twitter:description" content="前言为了保证团队内部代码风格的统一，提升代码的质量，更好的遵循标准的编写规范。必须定义一个统一的规范，在执行上前期主要由团队的老司机进行codereview，并对review出来的问题进行总结和回顾，避免后期犯类似的错误。但是这样会加大老司机的工作量，降低整个团队的工作效率，如果项目周期比较赶可能会放松对代码的要求。因此，有必要引入自动化工具来帮助我们保证代码的质量，这里主要采用两种办法：
-
-co">
+<meta name="twitter:title" content="从Java到Kotlin">
+<meta name="twitter:description" content="Kotlin是什么今年Google I/O 大会正式确立了Kotlin的地位，作为一名Android开发者，一定要紧跟Google的步伐。
+Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码高度相似。语法上和Groovy、Javascript都很类似，非常容易上手。——IntelliJ IDEA由JetBrains开发(Android Studio基于它的插件实现) ，Kotl">
 
 
 
@@ -130,13 +127,13 @@ co">
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/03/16/代码规范检查/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/06/01/从Java到Kotlin/"/>
 
 
 
 
 
-  <title> 代码规范检查 | 个人博客 </title>
+  <title> 从Java到Kotlin | 个人博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -253,7 +250,7 @@ co">
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/16/代码规范检查/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/01/从Java到Kotlin/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="潘威">
@@ -277,7 +274,7 @@ co">
             
             
               
-                代码规范检查
+                从Java到Kotlin
               
             
           </h1>
@@ -292,8 +289,8 @@ co">
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-03-16T19:03:56+08:00">
-                2017-03-16
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-01T19:05:06+08:00">
+                2017-06-01
               </time>
             
 
@@ -350,75 +347,135 @@ co">
       
 
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>为了保证团队内部代码风格的统一，提升代码的质量，更好的遵循标准的编写规范。必须定义一个统一的规范，在执行上前期主要由团队的老司机进行codereview，并对review出来的问题进行总结和回顾，避免后期犯类似的错误。但是这样会加大老司机的工作量，降低整个团队的工作效率，如果项目周期比较赶可能会放松对代码的要求。因此，有必要引入自动化工具来帮助我们保证代码的质量，这里主要采用两种办法：</p>
+        <h1 id="Kotlin是什么"><a href="#Kotlin是什么" class="headerlink" title="Kotlin是什么"></a>Kotlin是什么</h1><p>今年Google I/O 大会正式确立了Kotlin的地位，作为一名Android开发者，一定要紧跟Google的步伐。</p>
+<p>Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码高度相似。语法上和Groovy、Javascript都很类似，非常容易上手。——IntelliJ IDEA由JetBrains开发(Android Studio基于它的插件实现) ，Kotlin也是JetBrains创造，所以他们之间存在天然的联系。</p>
 <ul>
-<li><p><strong>coding阶段</strong>：为IDE配置统一的格式化模板，在完成开发后手动进行format。具体配置方式参见<a href="http://note.youdao.com/groupshare/?token=A0EFFF04E19246089EAFACD7A818FEF0&amp;gid=30539562" target="_blank" rel="external">Android端Code Style统一规范</a></p>
-</li>
-<li><p><strong>build阶段</strong>：使用checkstyle工具检查代码，注释、命名规范、方法长度、空格缩进等不再需要手工检查，由于标准的check过于严格，可以根据实际情况取消部分检查规则。对于不符合规范的代码，警告或者错误提示。</p>
-</li>
+<li><strong>与Java交互性好</strong></li>
 </ul>
-<h1 id="Checkstyle配置"><a href="#Checkstyle配置" class="headerlink" title="Checkstyle配置"></a>Checkstyle配置</h1><p>具体的配置步骤：</p>
-<p>1、将自定义的checkstyle.xml文件放在项目/setting目录下.</p>
-<p>2、添加checkstyle任务，并配置检查项目。</p>
-<pre><code>allprojects{
-   repositories{ 
-         jcenter()
- }
- task checkstyle(type: Checkstyle) {
-       showViolations = true
-       configFile file(&quot;../settings/checkstyle.xml&quot;)
-       source &apos;src/main/java&apos;//检查Java代码
-       include &apos;**/*.java&apos;  //不检查
-       exclude &apos;**/gen/**&apos;
-       exclude &apos;**/R.java&apos;
-       exclude &apos;**/BuildConfig.java&apos;
+<blockquote>
+<p>Kotlin和Java的交互性很好，可以说是无缝连接。这表现在Kotlin可以自由的引用Java的代码，反之亦然。</p>
+<p>Kotlin可以现有的全部的Java框架和库Java文件可以很轻松的借助IntelliJ的插件转成Kotlin</p>
+</blockquote>
+<ul>
+<li><strong>Kotlin应用广泛</strong></li>
+</ul>
+<blockquote>
+<p>Kotlin具有跨平台性，可以用于服务器端、Android和JavaScript </p>
+<p>在Android应用开发上有着较好的支持，存在Dagger，RxKotlin,Anko等等工具库。目前一些大厂以及开源项目已经使用Kotlin，Java转Kotlin在不久的将来就会全面展开。</p>
+</blockquote>
+<h1 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h1><p><strong>1、语法上(不讲具体的语法，特性)</strong></p>
+<pre><code>//variables and constants
+var currentVersionCode = 1   //变量当前的版本号，类型Int可以根据值推断出来
+var currentVersionName : String = &quot;1.0&quot; //显式标明类型
+val APPNAME = &quot;droidyue.com&quot; //常量APPNAME 类型(String)可以根据值推断出来
 
-       // empty classpath
-       classpath = files()
-       ignoreFailures true     // 忽略检查失败的情况，避免gradle命令执行中止
-   }
+//methods
+fun main(args: Array&lt;String&gt;) {
+    println(args)
 }
-</code></pre><p>3、在module的build.gradle中添加checkstyle插件，并声明checkstyle任务的执行条件。</p>
-<pre><code>apply plugin: &apos;checkstyle&apos;
 
-preBuild.dependsOn(&apos;checkstyle&apos;)
-assemble.dependsOn(&apos;lint&apos;)
-check.dependsOn(&apos;checkstyle&apos;)
-</code></pre><p>4、在终端中执行如下命令，可在/app/build/reports中看到生成的警示报告文件。</p>
-<pre><code>./gradlew checkstyle 
-</code></pre><h1 id="自定义xml配置文件"><a href="#自定义xml配置文件" class="headerlink" title="自定义xml配置文件"></a>自定义xml配置文件</h1><p>IDE的Code Style Format包括如下几个部分：</p>
-<ul>
-<li>Tabs and Indents</li>
-<li>Spaces</li>
-<li>Wrapping and braces</li>
-<li>Blank lines</li>
-<li>JavaDoc</li>
-<li>Arrangement</li>
-<li>Imports</li>
-<li>Code Generation</li>
+// class
+class MainActivity : AppCompatActivity() {
+
+}
+</code></pre><ul>
+<li>Kotlin支持智能类型转换。</li>
+<li>另外用var表示变量，val表示常量更加的简洁</li>
+<li>方法也很简单（使用fun缩写标识方法）</li>
+<li>类的继承和实现很简单，使用:即可</li>
+<li>Kotlin每个句子都不需要加分号;</li>
 </ul>
-<p>可以直接在IntelliJ IDEA中勾选设置，然后导出配置文件，共享给团队成员。但它只能对代码的格式进行自动调整，无法检查代码的问题和错误。Checkstyle插件是在format的基础上，对代码的格式和语法进行检查和分析，包括下面几大类型：</p>
+<p><strong>2、简化代码，代码量大大减少。</strong></p>
+<p>Java</p>
+<pre><code>public class User {
+    private String name;
+    private String id;
+
+    public User(String name, String id) {
+        this.name = name;
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+}
+</code></pre><p>Kotlin </p>
+<pre><code>data class User(var name: String, var id: String)
+</code></pre><p> Kotlin 就会创建出一个完整的数据类，并自动生成相应的 equals、hashcode、toString 方法</p>
+<p><strong>3、便于扩展，现有类的基础上，添加一些属性或者方法，无需继承。</strong></p>
+<p>Java</p>
+<pre><code>Button button = findviewbyid(R.id.button)
+button.setOnClickListener(new View.OnClickListener() {
+    @Override public void onClick(View v) {
+        Toast.makeText(this,&quot;hello java&quot;,Toast.LENGTH_SHORT);
+    }
+});
+</code></pre><p>Kotlin</p>
+<pre><code>//支持默认参数值，减少方法重载
+fun Context.toast(message: String, duration:Int = Toast.LENGTH_LONG) {
+    Toast.makeText(this, message, duration).show()
+}
+
+button.setOnClickListener {toast(&quot;hello kotlin&quot;)}
+</code></pre><p><strong>4、安全性</strong></p>
+<p>Java</p>
+<pre><code>public void test(String string) {
+    if (string != null) {
+        char[] chars = string.toCharArray();
+        if (chars.length &gt; 10) {
+            System.out.println(((Character)chars[10]).hashCode());
+        }
+    }
+}
+</code></pre><p>Kotlin  </p>
+<pre><code>fun testNullSafeOperator(string: String?) {
+    System.out.println(string?.toCharArray()?.getOrNull(10)?.hashCode())
+}
+</code></pre><p>Java中不得不写很多防御性的代码，防止出现NullPointerException，Kotlin使用空安全符？来明确对象是否为空，否则编译无法通过。</p>
+<h1 id="怎么用"><a href="#怎么用" class="headerlink" title="怎么用"></a>怎么用</h1><p>Android Studio在3.0版本中直接集成了Kotlin插件，在3.0之下还需手动安装：</p>
+<p><strong>1、在Setting里找到Plugin选项，搜索Kotlin插件。</strong></p>
 <ul>
-<li>Javadoc Comments </li>
-<li>Naming Conventions</li>
-<li>Imports</li>
-<li>Size Violations</li>
-<li>Whitespace</li>
-<li>ModifierOrder</li>
-<li>Block Checks</li>
-<li>Coding</li>
-<li>Class Design</li>
-<li>Duplicate Code</li>
-<li>Miscellaneous</li>
+<li>Kotlin：基础插件，对Kotlin的语法支持</li>
+<li><p>Kotlin Android Extensions：可以自动从XML中注入View到activity中，作为属性直接使用，省去了findViewById()和convert view的过程。</p>
+<pre><code>//导入指定布局文件中所有控件属性
+import kotlinx.android.synthetic.main.＜布局＞.*
+</code></pre><p>  ButterKnife可以扔到垃圾桶了。但存在一个问题，对于历史XML布局文件，ViewID的命名方式可能在Java代码中并不友好。解决办法：</p>
+<blockquote>
+<p>1、给布局文件中的viewID rename</p>
+<p>2、扩展Content类，自定义变量名转换映射方法</p>
+<p>3、继续使用findViewById方式。</p>
+</blockquote>
+</li>
 </ul>
-<p>根据项目实际情况，主要对Javadoc注释、命名规范、import语句、代码块、缩进和空行以及风格、类设计、重复代码等分析规则进行配置。<br>具体配置文件如下<a href="https://github.com/checkstyle/checkstyle/blob/master/config/checkstyle_checks.xml" target="_blank" rel="external">checkstyle.xml</a></p>
+<p><strong>2、在模块的gradle下加入如下代码：</strong></p>
+<pre><code>apply plugin: &apos;kotlin-android&apos;
+apply plugin: &apos;kotlin-android-extensions&apos;
+</code></pre><p>   <strong>然后在project的gradle下加入：</strong></p>
+<pre><code>classpath &quot;org.jetbrains.kotlin:kotlin-gradle-plugin:$yourversion&quot;
+</code></pre><p><strong>3、编写Kotlin  or Java代码转换</strong></p>
+<p><strong>4、构建和发布用于 Android 的 Kotlin 应用程序</strong></p>
+<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p><strong>1、官方3.0正式版未发布，可能有坑</strong></p>
+<p><strong>2、是否带来效率的提高?</strong></p>
 <blockquote>
-<p>这里参照了官方提供的配置文件<a href="https://github.com/checkstyle/checkstyle/blob/master/config/checkstyle_checks.xml" target="_blank" rel="external">checkstyle_checks.xml</a>，并加以详细的注释，可根据实际需求添加或移除module。</p>
+<p>在生成环境中，稳定高于一切。追求新技术，一方面会给团队带来开发和维护上的学习成本，另一方面也要承担未来某些情况下因为对新技术不熟悉而产生未知问题的风险。</p>
+<p>在后面的项目中，部分小模块可以选择性使用。Kotlin的优势会慢慢展现出来的，但是需要一个较为漫长的过渡期。</p>
 </blockquote>
-<h1 id="自定义文件说明"><a href="#自定义文件说明" class="headerlink" title="自定义文件说明"></a>自定义文件说明</h1><p>Checkstyle配置文件通过指定modules应用到java文件。modules是树状结构，以一个名为Checker的module作为root节点，一般的checker都会包括TreeWalker子module。</p>
-<blockquote>
-<p>xml配置文件中通过module的name属性来区分module，module的Properties可以控制如何去执行这个module，每个property都有一个默认值，所有的check都有一个severity属性，用它来指定check的level。TreeWalker为每个java文件创建一个语法树，在节点之间调用submodules的Checks。</p>
-</blockquote>
+<h1 id="学习资料"><a href="#学习资料" class="headerlink" title="学习资料"></a>学习资料</h1><p>官方网站<br>链接：<a href="http://kotlinlang.org/" target="_blank" rel="external">http://kotlinlang.org/</a></p>
+<p>在线代码环境<br>链接：<a href="https://try.kotlinlang.org/" target="_blank" rel="external">https://try.kotlinlang.org/</a> </p>
+<p>官方GitHub<br>链接：<a href="https://github.com/JetBrains/kotlin" target="_blank" rel="external">https://github.com/JetBrains/kotlin</a></p>
 
       
     </div>
@@ -444,7 +501,7 @@ check.dependsOn(&apos;checkstyle&apos;)
           
             <a href="/tags/Java/" rel="tag"># Java</a>
           
-            <a href="/tags/code/" rel="tag"># code</a>
+            <a href="/tags/Kotlin/" rel="tag"># Kotlin</a>
           
         </div>
       
@@ -457,8 +514,8 @@ check.dependsOn(&apos;checkstyle&apos;)
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/02/28/实现多样式富文本/" rel="next" title="如何实现多样式富文本">
-                <i class="fa fa-chevron-left"></i> 如何实现多样式富文本
+              <a href="/2017/03/28/打造一个通用Adapter/" rel="next" title="打造一个通用Adapter">
+                <i class="fa fa-chevron-left"></i> 打造一个通用Adapter
               </a>
             
           </div>
@@ -466,10 +523,6 @@ check.dependsOn(&apos;checkstyle&apos;)
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/03/28/打造一个通用Adapter/" rel="prev" title="打造一个通用Adapter">
-                打造一个通用Adapter <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -592,7 +645,7 @@ check.dependsOn(&apos;checkstyle&apos;)
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Checkstyle配置"><span class="nav-number">2.</span> <span class="nav-text">Checkstyle配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自定义xml配置文件"><span class="nav-number">3.</span> <span class="nav-text">自定义xml配置文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自定义文件说明"><span class="nav-number">4.</span> <span class="nav-text">自定义文件说明</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kotlin是什么"><span class="nav-number">1.</span> <span class="nav-text">Kotlin是什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优势"><span class="nav-number">2.</span> <span class="nav-text">优势</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#怎么用"><span class="nav-number">3.</span> <span class="nav-text">怎么用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充"><span class="nav-number">4.</span> <span class="nav-text">补充</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#学习资料"><span class="nav-number">5.</span> <span class="nav-text">学习资料</span></a></li></ol></div>
             
 
           </div>

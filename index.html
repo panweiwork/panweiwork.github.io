@@ -245,6 +245,277 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/01/从Java到Kotlin/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="潘威">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/me.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="个人博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="个人博客" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/06/01/从Java到Kotlin/" itemprop="url">
+                  从Java到Kotlin
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-01T19:05:06+08:00">
+                2017-06-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Kotlin是什么"><a href="#Kotlin是什么" class="headerlink" title="Kotlin是什么"></a>Kotlin是什么</h1><p>今年Google I/O 大会正式确立了Kotlin的地位，作为一名Android开发者，一定要紧跟Google的步伐。</p>
+<p>Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码高度相似。语法上和Groovy、Javascript都很类似，非常容易上手。——IntelliJ IDEA由JetBrains开发(Android Studio基于它的插件实现) ，Kotlin也是JetBrains创造，所以他们之间存在天然的联系。</p>
+<ul>
+<li><strong>与Java交互性好</strong></li>
+</ul>
+<blockquote>
+<p>Kotlin和Java的交互性很好，可以说是无缝连接。这表现在Kotlin可以自由的引用Java的代码，反之亦然。</p>
+<p>Kotlin可以现有的全部的Java框架和库Java文件可以很轻松的借助IntelliJ的插件转成Kotlin</p>
+</blockquote>
+<ul>
+<li><strong>Kotlin应用广泛</strong></li>
+</ul>
+<blockquote>
+<p>Kotlin具有跨平台性，可以用于服务器端、Android和JavaScript </p>
+<p>在Android应用开发上有着较好的支持，存在Dagger，RxKotlin,Anko等等工具库。目前一些大厂以及开源项目已经使用Kotlin，Java转Kotlin在不久的将来就会全面展开。</p>
+</blockquote>
+<h1 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h1><p><strong>1、语法上(不讲具体的语法，特性)</strong></p>
+<pre><code>//variables and constants
+var currentVersionCode = 1   //变量当前的版本号，类型Int可以根据值推断出来
+var currentVersionName : String = &quot;1.0&quot; //显式标明类型
+val APPNAME = &quot;droidyue.com&quot; //常量APPNAME 类型(String)可以根据值推断出来
+
+//methods
+fun main(args: Array&lt;String&gt;) {
+    println(args)
+}
+
+// class
+class MainActivity : AppCompatActivity() {
+
+}
+</code></pre><ul>
+<li>Kotlin支持智能类型转换。</li>
+<li>另外用var表示变量，val表示常量更加的简洁</li>
+<li>方法也很简单（使用fun缩写标识方法）</li>
+<li>类的继承和实现很简单，使用:即可</li>
+<li>Kotlin每个句子都不需要加分号;</li>
+</ul>
+<p><strong>2、简化代码，代码量大大减少。</strong></p>
+<p>Java</p>
+<pre><code>public class User {
+    private String name;
+    private String id;
+
+    public User(String name, String id) {
+        this.name = name;
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+}
+</code></pre><p>Kotlin </p>
+<pre><code>data class User(var name: String, var id: String)
+</code></pre><p> Kotlin 就会创建出一个完整的数据类，并自动生成相应的 equals、hashcode、toString 方法</p>
+<p><strong>3、便于扩展，现有类的基础上，添加一些属性或者方法，无需继承。</strong></p>
+<p>Java</p>
+<pre><code>Button button = findviewbyid(R.id.button)
+button.setOnClickListener(new View.OnClickListener() {
+    @Override public void onClick(View v) {
+        Toast.makeText(this,&quot;hello java&quot;,Toast.LENGTH_SHORT);
+    }
+});
+</code></pre><p>Kotlin</p>
+<pre><code>//支持默认参数值，减少方法重载
+fun Context.toast(message: String, duration:Int = Toast.LENGTH_LONG) {
+    Toast.makeText(this, message, duration).show()
+}
+
+button.setOnClickListener {toast(&quot;hello kotlin&quot;)}
+</code></pre><p><strong>4、安全性</strong></p>
+<p>Java</p>
+<pre><code>public void test(String string) {
+    if (string != null) {
+        char[] chars = string.toCharArray();
+        if (chars.length &gt; 10) {
+            System.out.println(((Character)chars[10]).hashCode());
+        }
+    }
+}
+</code></pre><p>Kotlin  </p>
+<pre><code>fun testNullSafeOperator(string: String?) {
+    System.out.println(string?.toCharArray()?.getOrNull(10)?.hashCode())
+}
+</code></pre><p>Java中不得不写很多防御性的代码，防止出现NullPointerException，Kotlin使用空安全符？来明确对象是否为空，否则编译无法通过。</p>
+<h1 id="怎么用"><a href="#怎么用" class="headerlink" title="怎么用"></a>怎么用</h1><p>Android Studio在3.0版本中直接集成了Kotlin插件，在3.0之下还需手动安装：</p>
+<p><strong>1、在Setting里找到Plugin选项，搜索Kotlin插件。</strong></p>
+<ul>
+<li>Kotlin：基础插件，对Kotlin的语法支持</li>
+<li><p>Kotlin Android Extensions：可以自动从XML中注入View到activity中，作为属性直接使用，省去了findViewById()和convert view的过程。</p>
+<pre><code>//导入指定布局文件中所有控件属性
+import kotlinx.android.synthetic.main.＜布局＞.*
+</code></pre><p>  ButterKnife可以扔到垃圾桶了。但存在一个问题，对于历史XML布局文件，ViewID的命名方式可能在Java代码中并不友好。解决办法：</p>
+<blockquote>
+<p>1、给布局文件中的viewID rename</p>
+<p>2、扩展Content类，自定义变量名转换映射方法</p>
+<p>3、继续使用findViewById方式。</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>2、在模块的gradle下加入如下代码：</strong></p>
+<pre><code>apply plugin: &apos;kotlin-android&apos;
+apply plugin: &apos;kotlin-android-extensions&apos;
+</code></pre><p>   <strong>然后在project的gradle下加入：</strong></p>
+<pre><code>classpath &quot;org.jetbrains.kotlin:kotlin-gradle-plugin:$yourversion&quot;
+</code></pre><p><strong>3、编写Kotlin  or Java代码转换</strong></p>
+<p><strong>4、构建和发布用于 Android 的 Kotlin 应用程序</strong></p>
+<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p><strong>1、官方3.0正式版未发布，可能有坑</strong></p>
+<p><strong>2、是否带来效率的提高?</strong></p>
+<blockquote>
+<p>在生成环境中，稳定高于一切。追求新技术，一方面会给团队带来开发和维护上的学习成本，另一方面也要承担未来某些情况下因为对新技术不熟悉而产生未知问题的风险。</p>
+<p>在后面的项目中，部分小模块可以选择性使用。Kotlin的优势会慢慢展现出来的，但是需要一个较为漫长的过渡期。</p>
+</blockquote>
+<h1 id="学习资料"><a href="#学习资料" class="headerlink" title="学习资料"></a>学习资料</h1><p>官方网站<br>链接：<a href="http://kotlinlang.org/" target="_blank" rel="external">http://kotlinlang.org/</a></p>
+<p>在线代码环境<br>链接：<a href="https://try.kotlinlang.org/" target="_blank" rel="external">https://try.kotlinlang.org/</a> </p>
+<p>官方GitHub<br>链接：<a href="https://github.com/JetBrains/kotlin" target="_blank" rel="external">https://github.com/JetBrains/kotlin</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
   <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/28/打造一个通用Adapter/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1677,7 +1948,7 @@ void addNewEntry(K key, V value, int hash, int index) {
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1695,7 +1966,7 @@ void addNewEntry(K key, V value, int hash, int index) {
           
             <div class="site-state-item site-state-tags">
               
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">7</span>
                 <span class="site-state-item-name">标签</span>
               
             </div>
