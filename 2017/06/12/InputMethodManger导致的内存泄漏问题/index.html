@@ -1,0 +1,913 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="内存泄漏," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="现象今天使用LeakCanary检查程序，发现很多页面都存在内存泄漏，虽然各页面的引用路径不完全相同，但最终都会指向InputMethodManager，所以考虑从InputMethodManager入手。如图：查看代码没有发现什么问题，于是看了一下InputMethodManager的源码,下面是获取sInstance的方法
+public static InputMethodManager ge">
+<meta property="og:type" content="article">
+<meta property="og:title" content="InputMethodManger导致的内存泄漏问题">
+<meta property="og:url" content="http://yoursite.com/2017/06/12/InputMethodManger导致的内存泄漏问题/index.html">
+<meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="现象今天使用LeakCanary检查程序，发现很多页面都存在内存泄漏，虽然各页面的引用路径不完全相同，但最终都会指向InputMethodManager，所以考虑从InputMethodManager入手。如图：查看代码没有发现什么问题，于是看了一下InputMethodManager的源码,下面是获取sInstance的方法
+public static InputMethodManager ge">
+<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/leak/leak.png">
+<meta property="og:updated_time" content="2017-06-12T12:42:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="InputMethodManger导致的内存泄漏问题">
+<meta name="twitter:description" content="现象今天使用LeakCanary检查程序，发现很多页面都存在内存泄漏，虽然各页面的引用路径不完全相同，但最终都会指向InputMethodManager，所以考虑从InputMethodManager入手。如图：查看代码没有发现什么问题，于是看了一下InputMethodManager的源码,下面是获取sInstance的方法
+public static InputMethodManager ge">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/leak/leak.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/12/InputMethodManger导致的内存泄漏问题/"/>
+
+
+
+
+
+  <title> InputMethodManger导致的内存泄漏问题 | 个人博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">个人博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/12/InputMethodManger导致的内存泄漏问题/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="潘威">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/me.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="个人博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="个人博客" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                InputMethodManger导致的内存泄漏问题
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-12T20:33:08+08:00">
+                2017-06-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h2><p>今天使用LeakCanary检查程序，发现很多页面都存在内存泄漏，虽然各页面的引用路径不完全相同，但最终都会指向InputMethodManager，所以考虑从InputMethodManager入手。如图：<br><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/leak/leak.png" alt="leak"><br>查看代码没有发现什么问题，于是看了一下InputMethodManager的源码,下面是获取sInstance的方法</p>
+<pre><code>public static InputMethodManager getInstance() {
+    synchronized (InputMethodManager.class) {
+        if (sInstance == null) {
+            IBinder b = ServiceManager.getService(Context.INPUT_METHOD_SERVICE);
+            IInputMethodManager service = IInputMethodManager.Stub.asInterface(b);
+            sInstance = new InputMethodManager(service, Looper.getMainLooper());
+        }
+        return sInstance;
+    }
+}
+</code></pre><ul>
+<li>sInstance是一个全局单例，多个页面使用同一个InputMethodManager实例，也就是说sInstance的引用链指向新页面时，老的页面才能回收释放。</li>
+</ul>
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p><strong>思路：</strong></p>
+<p>1、定位InputMethodManager中具体的引用变量；</p>
+<p>2、页面onDestroy时给其置空（使用反射）。</p>
+<p>解决这个问题需要复现并结合源码进行分析，同时使用反射不免会产生一些新的bug，网上搜索看看是否有成熟的解决方案。</p>
+<p>其实这是Android的一个公开bug  <a href="https://issuetracker.google.com/issues/37043700" target="_blank" rel="external">链接</a></p>
+<p><strong>看如下描述</strong>：</p>
+<p>InputMethodManager.mServedView keeps a reference to that last focused view, until another view get focus. This prevent the part of the view hierarchy that was detached from being garbage collected, and therefore creates a memory leak. </p>
+<p>原来问题在mServedView这个变量上，它指向的就是获取焦点用于输入的view，同时这个view又持有了页面的引用。</p>
+<p>贴出大神的解决方案 <a href="https://gist.github.com/pyricau/4df64341cc978a7de414" target="_blank" rel="external">链接</a>：</p>
+<pre><code>public class IMMLeaksUtils {
+
+/**
+ * Fix for https://code.google.com/p/android/issues/detail?id=171190 .
+ *
+ * When a view that has focus gets detached, we wait for the main thread to be idle and then
+ * check if the InputMethodManager is leaking a view. If yes, we tell it that the decor view got
+ * focus, which is what happens if you press home and come back from recent apps. This replaces
+ * the reference to the detached view with a reference to the decor view.
+ *
+ * Should be called from {@link Activity#onCreate(android.os.Bundle)} )}.
+ */
+public static InputMethodManager getInputMethodManager(Application application) {
+    final InputMethodManager inputMethodManager =
+            (InputMethodManager) application.getSystemService(INPUT_METHOD_SERVICE);
+
+    if (SDK_INT &lt; KITKAT || SDK_INT &gt; 23) {
+        return inputMethodManager;
+    }
+
+    final Field mServedViewField;
+    final Field mHField;
+    final Method finishInputLockedMethod;
+    final Method focusInMethod;
+    try {
+        mServedViewField = InputMethodManager.class.getDeclaredField(&quot;mServedView&quot;);
+        mServedViewField.setAccessible(true);
+        mHField = InputMethodManager.class.getDeclaredField(&quot;mH&quot;);//lock
+        mHField.setAccessible(true);
+        finishInputLockedMethod = InputMethodManager.class.getDeclaredMethod(&quot;finishInputLocked&quot;);
+        finishInputLockedMethod.setAccessible(true);
+        focusInMethod = InputMethodManager.class.getDeclaredMethod(&quot;focusIn&quot;, View.class);
+        focusInMethod.setAccessible(true);
+    } catch (NoSuchMethodException | NoSuchFieldException unexpected) {
+        Log.e(&quot;IMMLeaks&quot;, &quot;Unexpected reflection exception&quot;, unexpected);
+        return inputMethodManager;
+    }
+
+    application.registerActivityLifecycleCallbacks(new LifecycleCallbacksAdapter() {
+        @Override
+        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+            ReferenceCleaner cleaner =
+                    new ReferenceCleaner(inputMethodManager, mHField, mServedViewField, finishInputLockedMethod);
+            View rootView = activity.getWindow().getDecorView().getRootView();
+            ViewTreeObserver viewTreeObserver = rootView.getViewTreeObserver();
+            viewTreeObserver.addOnGlobalFocusChangeListener(cleaner);
+        }
+    });
+
+    return inputMethodManager;
+}
+
+/** Helper to avoid implementing all lifecycle callback methods. */
+static class LifecycleCallbacksAdapter implements Application.ActivityLifecycleCallbacks {
+    @Override
+    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    public void onActivityStarted(Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityResumed(Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityPaused(Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityStopped(Activity activity) {
+
+    }
+
+    @Override
+    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+    }
+
+    @Override
+    public void onActivityDestroyed(Activity activity) {
+
+    }
+}
+
+static class ReferenceCleaner implements MessageQueue.IdleHandler, View.OnAttachStateChangeListener,
+        ViewTreeObserver.OnGlobalFocusChangeListener {
+
+    private final InputMethodManager inputMethodManager;
+    private final Field mHField;
+    private final Field mServedViewField;
+    private final Method finishInputLockedMethod;
+
+    ReferenceCleaner(InputMethodManager inputMethodManager, Field mHField, Field mServedViewField,
+            Method finishInputLockedMethod) {
+        this.inputMethodManager = inputMethodManager;
+        this.mHField = mHField;
+        this.mServedViewField = mServedViewField;
+        this.finishInputLockedMethod = finishInputLockedMethod;
+    }
+
+    @Override
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (newFocus == null) {
+            return;
+        }
+        if (oldFocus != null) {
+            oldFocus.removeOnAttachStateChangeListener(this);
+        }
+        Looper.myQueue().removeIdleHandler(this);
+        newFocus.addOnAttachStateChangeListener(this);
+    }
+
+    @Override
+    public void onViewAttachedToWindow(View v) {
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(View v) {
+        v.removeOnAttachStateChangeListener(this);
+        Looper.myQueue().removeIdleHandler(this);
+        Looper.myQueue().addIdleHandler(this);
+    }
+
+    @Override
+    public boolean queueIdle() {
+        clearInputMethodManagerLeak();
+        return false;
+    }
+
+    private void clearInputMethodManagerLeak() {
+        try {
+            Object lock = mHField.get(inputMethodManager);
+            // This is highly dependent on the InputMethodManager implementation.
+            synchronized (lock) {
+                View servedView = (View) mServedViewField.get(inputMethodManager);
+                if (servedView != null) {
+
+                    boolean servedViewAttached = servedView.getWindowVisibility() != View.GONE;
+
+                    if (servedViewAttached) {
+                        // The view held by the IMM was replaced without a global focus change. Let&apos;s make
+                        // sure we get notified when that view detaches.
+
+                        // Avoid double registration.
+                        servedView.removeOnAttachStateChangeListener(this);
+                        servedView.addOnAttachStateChangeListener(this);
+                    } else {
+                        // servedView is not attached. InputMethodManager is being stupid!
+                        Activity activity = extractActivity(servedView.getContext());
+                        if (activity == null || activity.getWindow() == null) {
+                            // Unlikely case. Let&apos;s finish the input anyways.
+                            finishInputLockedMethod.invoke(inputMethodManager);
+                        } else {
+                            View decorView = activity.getWindow().peekDecorView();
+                            boolean windowAttached = decorView.getWindowVisibility() != View.GONE;
+                            if (!windowAttached) {
+                                finishInputLockedMethod.invoke(inputMethodManager);
+                            } else {
+                                decorView.requestFocusFromTouch();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IllegalAccessException | InvocationTargetException unexpected) {
+            Log.e(&quot;IMMLeaks&quot;, &quot;Unexpected reflection exception&quot;, unexpected);
+        }
+    }
+
+    private Activity extractActivity(Context context) {
+        while (true) {
+            if (context instanceof Application) {
+                return null;
+            } else if (context instanceof Activity) {
+                return (Activity) context;
+            } else if (context instanceof ContextWrapper) {
+                Context baseContext = ((ContextWrapper) context).getBaseContext();
+                // Prevent Stack Overflow.
+                if (baseContext == context) {
+                    return null;
+                }
+                context = baseContext;
+            } else {
+                return null;
+            }
+        }
+    }
+}
+}
+</code></pre><p>上面对原代码进行了细微的调整。</p>
+<p><strong>使用：</strong></p>
+<ul>
+<li><p>onCreate()中调用IMMLeaksUtils.getInputMethodManager方法获取InputMethodManager对象</p>
+</li>
+<li><p>只在有文本输入的页面调用</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/内存泄漏/" rel="tag"># 内存泄漏</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/01/从Java到Kotlin/" rel="next" title="从Java到Kotlin">
+                <i class="fa fa-chevron-left"></i> 从Java到Kotlin
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpeg"
+               alt="潘威" />
+          <p class="site-author-name" itemprop="name">潘威</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#现象"><span class="nav-number">1.</span> <span class="nav-text">现象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决"><span class="nav-number">2.</span> <span class="nav-text">解决</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">潘威</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
