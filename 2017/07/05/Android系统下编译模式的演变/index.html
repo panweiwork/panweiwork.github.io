@@ -87,26 +87,26 @@
 
 
 
-<meta name="description" content="#Java的执行方式Java虚拟机有3种执行方式，分别是解释执行、编译执行和混合模式，默认情况下处于混合模式中。使用命令行java –version可以查看虚拟机的执行模式。
+<meta name="description" content="Java的执行方式Java虚拟机有3种执行方式，分别是解释执行、编译执行和混合模式，默认情况下处于混合模式中。使用命令行java –version可以查看虚拟机的执行模式。
 
 
 interpreted mode表示解释执行模式，全部代码均解释执行。
 
 compiled mode表示编译执行模式，和解释执行模式相反，对于所有的方法，无论是否是热点代码，都会被编译执行。
 
-mixed mode表示混">
+mixed mode表示混合">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android系统下编译模式的演变">
 <meta property="og:url" content="http://yoursite.com/2017/07/05/Android系统下编译模式的演变/index.html">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="#Java的执行方式Java虚拟机有3种执行方式，分别是解释执行、编译执行和混合模式，默认情况下处于混合模式中。使用命令行java –version可以查看虚拟机的执行模式。
+<meta property="og:description" content="Java的执行方式Java虚拟机有3种执行方式，分别是解释执行、编译执行和混合模式，默认情况下处于混合模式中。使用命令行java –version可以查看虚拟机的执行模式。
 
 
 interpreted mode表示解释执行模式，全部代码均解释执行。
 
 compiled mode表示编译执行模式，和解释执行模式相反，对于所有的方法，无论是否是热点代码，都会被编译执行。
 
-mixed mode表示混">
+mixed mode表示混合">
 <meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/Java%E7%BC%96%E8%AF%91%E6%A8%A1%E5%BC%8F.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/jit%E5%B7%A5%E4%BD%9C%E8%BF%87%E7%A8%8B.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%8C%BA%E5%88%AB.jpg">
@@ -115,17 +115,17 @@ mixed mode表示混">
 <meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8E%A5%E5%8F%A3.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/%E6%B7%B7%E5%90%88%E8%BF%90%E8%A1%8C%E6%97%B61.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/%E6%B7%B7%E5%90%88%E8%BF%90%E8%A1%8C%E6%97%B62.jpg">
-<meta property="og:updated_time" content="2017-07-05T01:30:37.000Z">
+<meta property="og:updated_time" content="2017-07-05T01:33:50.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android系统下编译模式的演变">
-<meta name="twitter:description" content="#Java的执行方式Java虚拟机有3种执行方式，分别是解释执行、编译执行和混合模式，默认情况下处于混合模式中。使用命令行java –version可以查看虚拟机的执行模式。
+<meta name="twitter:description" content="Java的执行方式Java虚拟机有3种执行方式，分别是解释执行、编译执行和混合模式，默认情况下处于混合模式中。使用命令行java –version可以查看虚拟机的执行模式。
 
 
 interpreted mode表示解释执行模式，全部代码均解释执行。
 
 compiled mode表示编译执行模式，和解释执行模式相反，对于所有的方法，无论是否是热点代码，都会被编译执行。
 
-mixed mode表示混">
+mixed mode表示混合">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/Java%E7%BC%96%E8%AF%91%E6%A8%A1%E5%BC%8F.jpg">
 
 
@@ -385,7 +385,7 @@ mixed mode表示混">
       
 
       
-        <p>#Java的执行方式<br>Java虚拟机有3种执行方式，分别是解释执行、编译执行和混合模式，默认情况下处于混合模式中。使用命令行java –version可以查看虚拟机的执行模式。</p>
+        <h1 id="Java的执行方式"><a href="#Java的执行方式" class="headerlink" title="Java的执行方式"></a>Java的执行方式</h1><p>Java虚拟机有3种执行方式，分别是解释执行、编译执行和混合模式，默认情况下处于混合模式中。使用命令行java –version可以查看虚拟机的执行模式。</p>
 <p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/Java%E7%BC%96%E8%AF%91%E6%A8%A1%E5%BC%8F.jpg" alt="Java编译模式"></p>
 <ul>
 <li><p>interpreted mode表示解释执行模式，全部代码均解释执行。</p>
@@ -395,9 +395,7 @@ mixed mode表示混">
 <li><p>mixed mode表示混合模式，部分代码会被解释执行，也可能被编译执行。虚拟机决定热点（高频、反复使用）代码是否需要编译执行。</p>
 </li>
 </ul>
-<p>#什么是JIT和AOT</p>
-<p>##JIT（Just-in-time）</p>
-<p>JIT属于动态编译编译器，通常也被称为即时编译器。Java虚拟机默认使用的编译技术，也就是前面提到的混合编译模式，相比于解释执行全部字节码的效率低下，编译执行不加区分的编译转化成机器码。而混合模式较好的结合了二者的优势，对部分热点代码进行编译优化，在执行效率上接近C/C++。</p>
+<h1 id="什么是JIT和AOT"><a href="#什么是JIT和AOT" class="headerlink" title="什么是JIT和AOT"></a>什么是JIT和AOT</h1><h2 id="JIT（Just-in-time）"><a href="#JIT（Just-in-time）" class="headerlink" title="JIT（Just-in-time）"></a>JIT（Just-in-time）</h2><p>JIT属于动态编译编译器，通常也被称为即时编译器。Java虚拟机默认使用的编译技术，也就是前面提到的混合编译模式，相比于解释执行全部字节码的效率低下，编译执行不加区分的编译转化成机器码。而混合模式较好的结合了二者的优势，对部分热点代码进行编译优化，在执行效率上接近C/C++。</p>
 <p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/jit%E5%B7%A5%E4%BD%9C%E8%BF%87%E7%A8%8B.jpg" alt="jit工作过程"></p>
 <p>从图中看出整个执行过程如下：</p>
 <p>1、源代码经javac编译成字节码，即class文件</p>
@@ -409,11 +407,11 @@ mixed mode表示混">
 <blockquote>
 <p>运行时会将JIT编译过的机器码保存起来，第二次直接执行，但是识别热点代码也需要一个准备的过程。同时，对于部分只会被执行一次的代码，编译就是浪费效率。</p>
 </blockquote>
-<p>##AOT（Ahead-of-time）<br>AOT，就是在程序运行之前先将代码编译成本地机器语言的程序。AOT本质上是一种静态编译，它是相对于JIT而言的，也就是说，前者是在程序运行前进行编译，而后者是在程序运行时进行编译。</p>
+<h2 id="AOT（Ahead-of-time）"><a href="#AOT（Ahead-of-time）" class="headerlink" title="AOT（Ahead-of-time）"></a>AOT（Ahead-of-time）</h2><p>AOT，就是在程序运行之前先将代码编译成本地机器语言的程序。AOT本质上是一种静态编译，它是相对于JIT而言的，也就是说，前者是在程序运行前进行编译，而后者是在程序运行时进行编译。</p>
 <blockquote>
 <p>静态编译可以在运行时执行最大数量的本地代码，无需占用运行时间。但是编译方法越多，代码占用的内存也越多，大量代码可能很少甚至不会执行，编译器也无法对代码结构做优化。</p>
 </blockquote>
-<p>#Android系统上的演变<br>早期Android的Dalvik虚拟机在架构上保持跟JVM高度相似，如图：</p>
+<h1 id="Android系统上的演变"><a href="#Android系统上的演变" class="headerlink" title="Android系统上的演变"></a>Android系统上的演变</h1><p>早期Android的Dalvik虚拟机在架构上保持跟JVM高度相似，如图：</p>
 <p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%8C%BA%E5%88%AB.jpg" alt="虚拟机区别"></p>
 <ul>
 <li>JNI_GetDefaultJavaVMInitArgs  –获取虚拟机的默认初始化参数</li>
@@ -438,7 +436,7 @@ mixed mode表示混">
 <li>应用的内存占用更小</li>
 <li>改善了性能、更低的电池消耗</li>
 </ul>
-<p>#总结<br>混合模式也不是全能，达到最佳性能同样需要一个时间过程。没有万能的方案，每种模式都有其自身的优缺点，Android也是根据系统生态、硬件水平等方面的因素做出权衡。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>混合模式也不是全能，达到最佳性能同样需要一个时间过程。没有万能的方案，每种模式都有其自身的优缺点，Android也是根据系统生态、硬件水平等方面的因素做出权衡。</p>
 
       
     </div>
@@ -534,8 +532,17 @@ mixed mode表示混">
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/me.jpeg"
@@ -591,6 +598,22 @@ mixed mode表示混">
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java的执行方式"><span class="nav-number">1.</span> <span class="nav-text">Java的执行方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是JIT和AOT"><span class="nav-number">2.</span> <span class="nav-text">什么是JIT和AOT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JIT（Just-in-time）"><span class="nav-number">2.1.</span> <span class="nav-text">JIT（Just-in-time）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOT（Ahead-of-time）"><span class="nav-number">2.2.</span> <span class="nav-text">AOT（Ahead-of-time）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Android系统上的演变"><span class="nav-number">3.</span> <span class="nav-text">Android系统上的演变</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
     </div>
