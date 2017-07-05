@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Java,Kotlin," />
+  <meta name="keywords" content="编译模式,JIT,AOT," />
 
 
 
@@ -87,19 +87,46 @@
 
 
 
-<meta name="description" content="Kotlin是什么今年Google I/O 大会正式确立了Kotlin的地位，作为一名Android开发者，一定要紧跟Google的步伐。
-Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码高度相似。语法上和Groovy、Javascript都很类似，非常容易上手。——IntelliJ IDEA由JetBrains开发(Android Studio基于它的插件实现) ，Kotl">
+<meta name="description" content="#Java的执行方式Java虚拟机有3种执行方式，分别是解释执行、编译执行和混合模式，默认情况下处于混合模式中。使用命令行java –version可以查看虚拟机的执行模式。
+
+
+interpreted mode表示解释执行模式，全部代码均解释执行。
+
+compiled mode表示编译执行模式，和解释执行模式相反，对于所有的方法，无论是否是热点代码，都会被编译执行。
+
+mixed mode表示混">
 <meta property="og:type" content="article">
-<meta property="og:title" content="从Java到Kotlin">
-<meta property="og:url" content="http://yoursite.com/2017/06/01/从Java到Kotlin/index.html">
+<meta property="og:title" content="Android系统下编译模式的演变">
+<meta property="og:url" content="http://yoursite.com/2017/07/05/Android系统下编译模式的演变/index.html">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="Kotlin是什么今年Google I/O 大会正式确立了Kotlin的地位，作为一名Android开发者，一定要紧跟Google的步伐。
-Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码高度相似。语法上和Groovy、Javascript都很类似，非常容易上手。——IntelliJ IDEA由JetBrains开发(Android Studio基于它的插件实现) ，Kotl">
-<meta property="og:updated_time" content="2017-06-01T11:04:49.000Z">
+<meta property="og:description" content="#Java的执行方式Java虚拟机有3种执行方式，分别是解释执行、编译执行和混合模式，默认情况下处于混合模式中。使用命令行java –version可以查看虚拟机的执行模式。
+
+
+interpreted mode表示解释执行模式，全部代码均解释执行。
+
+compiled mode表示编译执行模式，和解释执行模式相反，对于所有的方法，无论是否是热点代码，都会被编译执行。
+
+mixed mode表示混">
+<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/Java%E7%BC%96%E8%AF%91%E6%A8%A1%E5%BC%8F.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/jit%E5%B7%A5%E4%BD%9C%E8%BF%87%E7%A8%8B.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%8C%BA%E5%88%AB.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/Android%E7%B3%BB%E7%BB%9F%E7%89%88%E6%9C%AC.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/AOT%20JIT%E5%AF%B9%E6%AF%94.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8E%A5%E5%8F%A3.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/%E6%B7%B7%E5%90%88%E8%BF%90%E8%A1%8C%E6%97%B61.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/%E6%B7%B7%E5%90%88%E8%BF%90%E8%A1%8C%E6%97%B62.jpg">
+<meta property="og:updated_time" content="2017-07-05T01:30:37.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="从Java到Kotlin">
-<meta name="twitter:description" content="Kotlin是什么今年Google I/O 大会正式确立了Kotlin的地位，作为一名Android开发者，一定要紧跟Google的步伐。
-Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码高度相似。语法上和Groovy、Javascript都很类似，非常容易上手。——IntelliJ IDEA由JetBrains开发(Android Studio基于它的插件实现) ，Kotl">
+<meta name="twitter:title" content="Android系统下编译模式的演变">
+<meta name="twitter:description" content="#Java的执行方式Java虚拟机有3种执行方式，分别是解释执行、编译执行和混合模式，默认情况下处于混合模式中。使用命令行java –version可以查看虚拟机的执行模式。
+
+
+interpreted mode表示解释执行模式，全部代码均解释执行。
+
+compiled mode表示编译执行模式，和解释执行模式相反，对于所有的方法，无论是否是热点代码，都会被编译执行。
+
+mixed mode表示混">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/Java%E7%BC%96%E8%AF%91%E6%A8%A1%E5%BC%8F.jpg">
 
 
 
@@ -127,13 +154,13 @@ Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码�
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/06/01/从Java到Kotlin/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/07/05/Android系统下编译模式的演变/"/>
 
 
 
 
 
-  <title> 从Java到Kotlin | 个人博客 </title>
+  <title> Android系统下编译模式的演变 | 个人博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -250,7 +277,7 @@ Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码�
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/01/从Java到Kotlin/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/05/Android系统下编译模式的演变/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="潘威">
@@ -274,7 +301,7 @@ Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码�
             
             
               
-                从Java到Kotlin
+                Android系统下编译模式的演变
               
             
           </h1>
@@ -289,8 +316,8 @@ Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码�
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-01T19:05:06+08:00">
-                2017-06-01
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-05T09:28:18+08:00">
+                2017-07-05
               </time>
             
 
@@ -314,6 +341,17 @@ Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码�
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/Android/" itemprop="url" rel="index">
                     <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
                   </a>
                 </span>
 
@@ -347,135 +385,60 @@ Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码�
       
 
       
-        <h1 id="Kotlin是什么"><a href="#Kotlin是什么" class="headerlink" title="Kotlin是什么"></a>Kotlin是什么</h1><p>今年Google I/O 大会正式确立了Kotlin的地位，作为一名Android开发者，一定要紧跟Google的步伐。</p>
-<p>Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码高度相似。语法上和Groovy、Javascript都很类似，非常容易上手。——IntelliJ IDEA由JetBrains开发(Android Studio基于它的插件实现) ，Kotlin也是JetBrains创造，所以他们之间存在天然的联系。</p>
+        <p>#Java的执行方式<br>Java虚拟机有3种执行方式，分别是解释执行、编译执行和混合模式，默认情况下处于混合模式中。使用命令行java –version可以查看虚拟机的执行模式。</p>
+<p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/Java%E7%BC%96%E8%AF%91%E6%A8%A1%E5%BC%8F.jpg" alt="Java编译模式"></p>
 <ul>
-<li><strong>与Java交互性好</strong></li>
-</ul>
-<blockquote>
-<p>Kotlin和Java的交互性很好，可以说是无缝连接。这表现在Kotlin可以自由的引用Java的代码，反之亦然。</p>
-<p>Kotlin可以现有的全部的Java框架和库Java文件可以很轻松的借助IntelliJ的插件转成Kotlin</p>
-</blockquote>
-<ul>
-<li><strong>Kotlin应用广泛</strong></li>
-</ul>
-<blockquote>
-<p>Kotlin具有跨平台性，可以用于服务器端、Android和JavaScript </p>
-<p>在Android应用开发上有着较好的支持，存在Dagger，RxKotlin,Anko等等工具库。目前一些大厂以及开源项目已经使用Kotlin，Java转Kotlin在不久的将来就会全面展开。</p>
-</blockquote>
-<h1 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h1><p><strong>1、语法上(不讲具体的语法，特性)</strong></p>
-<pre><code>//variables and constants
-var currentVersionCode = 1   //变量当前的版本号，类型Int可以根据值推断出来
-var currentVersionName : String = &quot;1.0&quot; //显式标明类型
-val APPNAME = &quot;droidyue.com&quot; //常量APPNAME 类型(String)可以根据值推断出来
-
-//methods
-fun main(args: Array&lt;String&gt;) {
-    println(args)
-}
-
-// class
-class MainActivity : AppCompatActivity() {
-
-}
-</code></pre><ul>
-<li>Kotlin支持智能类型转换。</li>
-<li>另外用var表示变量，val表示常量更加的简洁</li>
-<li>方法也很简单（使用fun缩写标识方法）</li>
-<li>类的继承和实现很简单，使用:即可</li>
-<li>Kotlin每个句子都不需要加分号;</li>
-</ul>
-<p><strong>2、简化代码，代码量大大减少。</strong></p>
-<p>Java</p>
-<pre><code>public class User {
-    private String name;
-    private String id;
-
-    public User(String name, String id) {
-        this.name = name;
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-}
-</code></pre><p>Kotlin </p>
-<pre><code>data class User(var name: String, var id: String)
-</code></pre><p> Kotlin 就会创建出一个完整的数据类，并自动生成相应的 equals、hashcode、toString 方法</p>
-<p><strong>3、便于扩展，现有类的基础上，添加一些属性或者方法，无需继承。</strong></p>
-<p>Java</p>
-<pre><code>Button button = findviewbyid(R.id.button)
-button.setOnClickListener(new View.OnClickListener() {
-    @Override public void onClick(View v) {
-        Toast.makeText(this,&quot;hello java&quot;,Toast.LENGTH_SHORT);
-    }
-});
-</code></pre><p>Kotlin</p>
-<pre><code>//支持默认参数值，减少方法重载
-fun Context.toast(message: String, duration:Int = Toast.LENGTH_LONG) {
-    Toast.makeText(this, message, duration).show()
-}
-
-button.setOnClickListener {toast(&quot;hello kotlin&quot;)}
-</code></pre><p><strong>4、安全性</strong></p>
-<p>Java</p>
-<pre><code>public void test(String string) {
-    if (string != null) {
-        char[] chars = string.toCharArray();
-        if (chars.length &gt; 10) {
-            System.out.println(((Character)chars[10]).hashCode());
-        }
-    }
-}
-</code></pre><p>Kotlin  </p>
-<pre><code>fun testNullSafeOperator(string: String?) {
-    System.out.println(string?.toCharArray()?.getOrNull(10)?.hashCode())
-}
-</code></pre><p>Java中不得不写很多防御性的代码，防止出现NullPointerException，Kotlin使用空安全符？来明确对象是否为空，否则编译无法通过。</p>
-<h1 id="怎么用"><a href="#怎么用" class="headerlink" title="怎么用"></a>怎么用</h1><p>Android Studio在3.0版本中直接集成了Kotlin插件，在3.0之下还需手动安装：</p>
-<p><strong>1、在Setting里找到Plugin选项，搜索Kotlin插件。</strong></p>
-<ul>
-<li>Kotlin：基础插件，对Kotlin的语法支持</li>
-<li><p>Kotlin Android Extensions：可以自动从XML中注入View到activity中，作为属性直接使用，省去了findViewById()和convert view的过程。</p>
-<pre><code>//导入指定布局文件中所有控件属性
-import kotlinx.android.synthetic.main.＜布局＞.*
-</code></pre><p>  ButterKnife可以扔到垃圾桶了。但存在一个问题，对于历史XML布局文件，ViewID的命名方式可能在Java代码中并不友好。解决办法：</p>
-<blockquote>
-<p>1、给布局文件中的viewID rename</p>
-<p>2、扩展Content类，自定义变量名转换映射方法</p>
-<p>3、继续使用findViewById方式。</p>
-</blockquote>
+<li><p>interpreted mode表示解释执行模式，全部代码均解释执行。</p>
+</li>
+<li><p>compiled mode表示编译执行模式，和解释执行模式相反，对于所有的方法，无论是否是热点代码，都会被编译执行。</p>
+</li>
+<li><p>mixed mode表示混合模式，部分代码会被解释执行，也可能被编译执行。虚拟机决定热点（高频、反复使用）代码是否需要编译执行。</p>
 </li>
 </ul>
-<p><strong>2、在模块的gradle下加入如下代码：</strong></p>
-<pre><code>apply plugin: &apos;kotlin-android&apos;
-apply plugin: &apos;kotlin-android-extensions&apos;
-</code></pre><p>   <strong>然后在project的gradle下加入：</strong></p>
-<pre><code>classpath &quot;org.jetbrains.kotlin:kotlin-gradle-plugin:$yourversion&quot;
-</code></pre><p><strong>3、编写Kotlin  or Java代码转换</strong></p>
-<p><strong>4、构建和发布用于 Android 的 Kotlin 应用程序</strong></p>
-<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p><strong>1、官方3.0正式版未发布，可能有坑</strong></p>
-<p><strong>2、是否带来效率的提高?</strong></p>
+<p>#什么是JIT和AOT</p>
+<p>##JIT（Just-in-time）</p>
+<p>JIT属于动态编译编译器，通常也被称为即时编译器。Java虚拟机默认使用的编译技术，也就是前面提到的混合编译模式，相比于解释执行全部字节码的效率低下，编译执行不加区分的编译转化成机器码。而混合模式较好的结合了二者的优势，对部分热点代码进行编译优化，在执行效率上接近C/C++。</p>
+<p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/jit%E5%B7%A5%E4%BD%9C%E8%BF%87%E7%A8%8B.jpg" alt="jit工作过程"></p>
+<p>从图中看出整个执行过程如下：</p>
+<p>1、源代码经javac编译成字节码，即class文件</p>
+<p>2、字节码经过JIT环境变量进行判断，是否属于“热点代码”（多次调用的方法，或循环等）</p>
+<p>3、如是，走JIT编译为具体硬件处理器（如sparc、intel）机器码</p>
+<p>4、如否，则直接由解释器解释执行</p>
+<p>5、操作系统及类库调用</p>
+<p>6、硬件</p>
 <blockquote>
-<p>在生成环境中，稳定高于一切。追求新技术，一方面会给团队带来开发和维护上的学习成本，另一方面也要承担未来某些情况下因为对新技术不熟悉而产生未知问题的风险。</p>
-<p>在后面的项目中，部分小模块可以选择性使用。Kotlin的优势会慢慢展现出来的，但是需要一个较为漫长的过渡期。</p>
+<p>运行时会将JIT编译过的机器码保存起来，第二次直接执行，但是识别热点代码也需要一个准备的过程。同时，对于部分只会被执行一次的代码，编译就是浪费效率。</p>
 </blockquote>
-<h1 id="学习资料"><a href="#学习资料" class="headerlink" title="学习资料"></a>学习资料</h1><p>官方网站<br>链接：<a href="http://kotlinlang.org/" target="_blank" rel="external">http://kotlinlang.org/</a></p>
-<p>在线代码环境<br>链接：<a href="https://try.kotlinlang.org/" target="_blank" rel="external">https://try.kotlinlang.org/</a> </p>
-<p>官方GitHub<br>链接：<a href="https://github.com/JetBrains/kotlin" target="_blank" rel="external">https://github.com/JetBrains/kotlin</a></p>
+<p>##AOT（Ahead-of-time）<br>AOT，就是在程序运行之前先将代码编译成本地机器语言的程序。AOT本质上是一种静态编译，它是相对于JIT而言的，也就是说，前者是在程序运行前进行编译，而后者是在程序运行时进行编译。</p>
+<blockquote>
+<p>静态编译可以在运行时执行最大数量的本地代码，无需占用运行时间。但是编译方法越多，代码占用的内存也越多，大量代码可能很少甚至不会执行，编译器也无法对代码结构做优化。</p>
+</blockquote>
+<p>#Android系统上的演变<br>早期Android的Dalvik虚拟机在架构上保持跟JVM高度相似，如图：</p>
+<p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%8C%BA%E5%88%AB.jpg" alt="虚拟机区别"></p>
+<ul>
+<li>JNI_GetDefaultJavaVMInitArgs  –获取虚拟机的默认初始化参数</li>
+<li>JNI_CreateJavaVM  – 在进程中创建虚拟机实例</li>
+<li>JNI_GetCreatedJavaVMs – 获取进程中创建的虚拟机实例</li>
+</ul>
+<p>从最早期的解释执行到现在的混合编译，经历了多个阶段：</p>
+<p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/Android%E7%B3%BB%E7%BB%9F%E7%89%88%E6%9C%AC.jpg" alt="Android系统版本"></p>
+<p>尤其是在4.4之后，性能上有了较大提升。引入ART取代了Dalvik。ART的主要特征之一就是安装时对应用的AOT编译。优点是优化产生的本地代码性能更好，执行起来需要更少的电量。劣势在于安装文件所需的空间和时间。在5.0和6.0中，大的应用需要数分钟才能安装完。</p>
+<p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/AOT%20JIT%E5%AF%B9%E6%AF%94.jpg" alt="AOT JIT对比"></p>
+<p>保持dex的向下兼容<br><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8E%A5%E5%8F%A3.jpg" alt="接口不变"></p>
+<p>7.0时代，ART中有一种新的、更快的解释器，通过一种新的JIT完成，但是这种JIT的信息不是持久化的。取而代之的是，代码在执行期间被分析，分析结果保存起来。然后，当设备空转和充电的时候，ART会执行针对“热代码”进行的基于分析的编译和优化。这个过程也属于AOT，可以理解为全时段的编译（All-Of-the-Time compilation）<br><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/%E6%B7%B7%E5%90%88%E8%BF%90%E8%A1%8C%E6%97%B61.png" alt="混合运行时1"></p>
+<p>工作流程：</p>
+<p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/AndroidCompileMode/%E6%B7%B7%E5%90%88%E8%BF%90%E8%A1%8C%E6%97%B62.jpg" alt="混合运行时2"></p>
+<blockquote>
+<p>系统会收集使用代码的各种信息（用户使用习惯），存储在profiles文件夹，当收集到一定量之后，达到系统的触发条件，进行dex2oat编译成机器码直接执行。这个过程不是一次性的，而是可以进行多次的，随着收集到应用运行时的代码各种信息越多，那么代码编译的质量就越高，效率越高，能不断更新编译的机器语言，达到执行最优化。</p>
+</blockquote>
+<p>混合使用AOT、解释、JIT的策略，优点也很明显：</p>
+<ul>
+<li>应用安装时间大大缩短</li>
+<li>无需要优化，系统升级更快</li>
+<li>应用的内存占用更小</li>
+<li>改善了性能、更低的电池消耗</li>
+</ul>
+<p>#总结<br>混合模式也不是全能，达到最佳性能同样需要一个时间过程。没有万能的方案，每种模式都有其自身的优缺点，Android也是根据系统生态、硬件水平等方面的因素做出权衡。</p>
 
       
     </div>
@@ -499,9 +462,11 @@ apply plugin: &apos;kotlin-android-extensions&apos;
       
         <div class="post-tags">
           
-            <a href="/tags/Java/" rel="tag"># Java</a>
+            <a href="/tags/编译模式/" rel="tag"># 编译模式</a>
           
-            <a href="/tags/Kotlin/" rel="tag"># Kotlin</a>
+            <a href="/tags/JIT/" rel="tag"># JIT</a>
+          
+            <a href="/tags/AOT/" rel="tag"># AOT</a>
           
         </div>
       
@@ -514,8 +479,8 @@ apply plugin: &apos;kotlin-android-extensions&apos;
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/03/28/打造一个通用Adapter/" rel="next" title="打造一个通用Adapter">
-                <i class="fa fa-chevron-left"></i> 打造一个通用Adapter
+              <a href="/2017/06/12/InputMethodManger导致的内存泄漏问题/" rel="next" title="InputMethodManger导致的内存泄漏问题">
+                <i class="fa fa-chevron-left"></i> InputMethodManger导致的内存泄漏问题
               </a>
             
           </div>
@@ -523,10 +488,6 @@ apply plugin: &apos;kotlin-android-extensions&apos;
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/06/12/InputMethodManger导致的内存泄漏问题/" rel="prev" title="InputMethodManger导致的内存泄漏问题">
-                InputMethodManger导致的内存泄漏问题 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -573,17 +534,8 @@ apply plugin: &apos;kotlin-android-extensions&apos;
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/me.jpeg"
@@ -639,22 +591,6 @@ apply plugin: &apos;kotlin-android-extensions&apos;
 
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kotlin是什么"><span class="nav-number">1.</span> <span class="nav-text">Kotlin是什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优势"><span class="nav-number">2.</span> <span class="nav-text">优势</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#怎么用"><span class="nav-number">3.</span> <span class="nav-text">怎么用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充"><span class="nav-number">4.</span> <span class="nav-text">补充</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#学习资料"><span class="nav-number">5.</span> <span class="nav-text">学习资料</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
     </div>
