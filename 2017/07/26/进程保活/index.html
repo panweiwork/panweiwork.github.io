@@ -1,0 +1,876 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="进程保活,进程优先级,进程回收," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="保活是不是耍流氓？
+很多场景如果要想为用户服务，就必须有一个进程常驻，以便在特定的时候做特定的事情。
+1、实现IM，推送，定位等功能。
+2、某些系统广播无法静态注册。
+
+android.intent.action.SCREEN_ON
+android.intent.action.SCREEN_OFF
+android.intent.action.BATTERY_CHANGED
+android.inte">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进程保活是耍流氓吗？">
+<meta property="og:url" content="http://yoursite.com/2017/07/26/进程保活/index.html">
+<meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="保活是不是耍流氓？
+很多场景如果要想为用户服务，就必须有一个进程常驻，以便在特定的时候做特定的事情。
+1、实现IM，推送，定位等功能。
+2、某些系统广播无法静态注册。
+
+android.intent.action.SCREEN_ON
+android.intent.action.SCREEN_OFF
+android.intent.action.BATTERY_CHANGED
+android.inte">
+<meta property="og:updated_time" content="2017-07-26T11:32:14.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="进程保活是耍流氓吗？">
+<meta name="twitter:description" content="保活是不是耍流氓？
+很多场景如果要想为用户服务，就必须有一个进程常驻，以便在特定的时候做特定的事情。
+1、实现IM，推送，定位等功能。
+2、某些系统广播无法静态注册。
+
+android.intent.action.SCREEN_ON
+android.intent.action.SCREEN_OFF
+android.intent.action.BATTERY_CHANGED
+android.inte">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/07/26/进程保活/"/>
+
+
+
+
+
+  <title> 进程保活是耍流氓吗？ | 个人博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">个人博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/26/进程保活/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="潘威">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/me.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="个人博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="个人博客" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                进程保活是耍流氓吗？
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-26T19:30:23+08:00">
+                2017-07-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>保活是不是耍流氓？</strong></p>
+<p>很多场景如果要想为用户服务，就必须有一个进程常驻，以便在特定的时候做特定的事情。</p>
+<p>1、实现IM，推送，定位等功能。</p>
+<p>2、某些系统广播无法静态注册。</p>
+<blockquote>
+<p>android.intent.action.SCREEN_ON</p>
+<p>android.intent.action.SCREEN_OFF</p>
+<p>android.intent.action.BATTERY_CHANGED</p>
+<p>android.intent.action.CONFIGURATION_CHANGED</p>
+<p>android.intent.action.TIME_TICK</p>
+</blockquote>
+<p>存在问题：<br>增加系统性能开销，所以结合内存、电池等消耗找到一个平衡点。</p>
+<p>Android系统中在没有白名单的情况下，要做到应用不被杀死基本不可能的，但是我们可以让应用尽可能的不被杀死，如果杀死也能够自动复活。</p>
+<h1 id="Android进程的优先级"><a href="#Android进程的优先级" class="headerlink" title="Android进程的优先级"></a>Android进程的优先级</h1><p>1、前台进程(Foreground process)</p>
+<ul>
+<li>某个进程持有一个正在与用户交互的Activity并且该Activity正处于resume的状态。 </li>
+<li>某个进程持有一个Service，并且该Service与用户正在交互的Activity绑定。 </li>
+<li>某个进程持有一个Service，并且该Service调用startForeground()方法使之位于前台运行。 </li>
+<li>某个进程持有一个Service，并且该Service正在执行它的某个生命周期回调方法，比如onCreate()、 onStart()或onDestroy()。 </li>
+<li>某个进程持有一个BroadcastReceiver，并且该BroadcastReceiver正在执行其onReceive()方法。</li>
+</ul>
+<p>表示用户正在使用的程序，一般系统是不会杀死前台进程的，除非用户强制停止应用或者系统内存不足等极端情况会杀死。</p>
+<p>2、可见进程(Visible process)</p>
+<ul>
+<li>拥有不在前台、但仍对用户可见的 Activity（已调用 onPause()）。 </li>
+<li>拥有绑定到可见（或前台）Activity 的 Service</li>
+</ul>
+<p>用户仅仅可见，无法交互！<br>一般系统也是不会杀死可见进程的，除非要在资源吃紧的情况下，要保持某个或多个前台进程存活</p>
+<p>3、服务进程(Service process)</p>
+<ul>
+<li>某个进程中运行着一个Service且该Service是通过startService()启动的，与用户看见的界面没有直接关联。</li>
+</ul>
+<p>在内存不足以维持所有前台进程和可见进程同时运行的情况下，服务进程会被杀死</p>
+<p>4、后台进程(Background process)</p>
+<ul>
+<li>在用户按了”back”或者”home”后,程序本身看不到了,但是其实还在运行的程序，比如Activity调用了onStop方法</li>
+</ul>
+<p>系统可能随时终止它们，回收内存</p>
+<p>5、空进程(Empty process)</p>
+<ul>
+<li>某个进程不包含任何活跃的组件时该进程就会被置为空进程，</li>
+</ul>
+<p>完全没用,直接干掉</p>
+<h1 id="Android进程的回收策略"><a href="#Android进程的回收策略" class="headerlink" title="Android进程的回收策略"></a>Android进程的回收策略</h1><p>系统出于体验和性能上的考虑，app在退到后台时系统并不会真正的kill掉这个进程，而是将其缓存起来。打开的应用越多，后台缓存的进程也越多。在系统内存不足的情况下，系统开始依据自身的一套进程回收机制来判断要kill掉哪些进程，以腾出内存来供给需要的app, 这套杀进程回收内存的机制就叫<strong>Low Memory Killer</strong>，位于kernel层。</p>
+<p>不同手机的内存阈值也不同，可以通过cat /sys/module/lowmemorykiller/parameters/minfree文件查看，一旦低于该值,Android便开始按顺序关闭进程。因此Android最先结束优先级最低的空进程。</p>
+<p>进程的优先级是通过进程的oom_adj值来反映的。Linux内核为每个系统进程分配了一个oom_adj值，代表进程的优先级，进程回收机制就是根据这个优先级来决定是否进行回收，oom_adj值定义在com.android.server.am.ProcessList类中。</p>
+<table>
+<thead>
+<tr>
+<th>adj级别</th>
+<th>值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UNKNOWN_ADJ</td>
+<td>16</td>
+<td>预留的最低级别，一般对于缓存的进程才有可能设置成这个级别</td>
+</tr>
+<tr>
+<td>CACHED_APP_MAX_ADJ</td>
+<td>15</td>
+<td>缓存进程，空进程，在内存不足的情况下就会优先被kill</td>
+</tr>
+<tr>
+<td><strong>CACHED_APP_MIN_ADJ</strong></td>
+<td>9</td>
+<td>缓存进程，也就是空进程</td>
+</tr>
+<tr>
+<td><strong>SERVICE_B_ADJ</strong></td>
+<td>8</td>
+<td>不活跃的进程</td>
+</tr>
+<tr>
+<td>PREVIOUS_APP_ADJ</td>
+<td>7</td>
+<td>切换进程</td>
+</tr>
+<tr>
+<td>HOME_APP_ADJ</td>
+<td>6</td>
+<td>与Home交互的进程</td>
+</tr>
+<tr>
+<td><strong>SERVICE_ADJ</strong></td>
+<td>5</td>
+<td>有Service的进程</td>
+</tr>
+<tr>
+<td>HEAVY_WEIGHT_APP_ADJ</td>
+<td>4</td>
+<td>高权重进程</td>
+</tr>
+<tr>
+<td>BACKUP_APP_ADJ</td>
+<td>3</td>
+<td>正在备份的进程</td>
+</tr>
+<tr>
+<td><strong>PERCEPTIBLE_APP_ADJ</strong></td>
+<td>2</td>
+<td>可感知的进程，比如那种播放音乐</td>
+</tr>
+<tr>
+<td><strong>VISIBLE_APP_ADJ</strong></td>
+<td>1</td>
+<td>可见进程</td>
+</tr>
+<tr>
+<td><strong>FOREGROUND_APP_ADJ</strong></td>
+<td>0</td>
+<td>前台进程</td>
+</tr>
+<tr>
+<td>PERSISTENT_SERVICE_ADJ</td>
+<td>-11</td>
+<td>重要进程</td>
+</tr>
+<tr>
+<td>PERSISTENT_PROC_ADJ</td>
+<td>-12</td>
+<td>核心进程</td>
+</tr>
+<tr>
+<td>SYSTEM_ADJ</td>
+<td>-16</td>
+<td>系统进程</td>
+</tr>
+<tr>
+<td>NATIVE_ADJ</td>
+<td>-17</td>
+<td>系统起的Native进程</td>
+</tr>
+</tbody>
+</table>
+<p>oom_adj的值越小，进程的优先级越高，普通进程oom_adj值是大于等于0的，而系统进程oom_adj的值是小于0的，第三方应用一般只能干掉4以上的进程。我们可以通过<strong>ps|grep</strong>和<strong>cat /proc/process id/oom_adj</strong>查看当前进程的oom_adj值。</p>
+<h1 id="常见的几种保活方案"><a href="#常见的几种保活方案" class="headerlink" title="常见的几种保活方案"></a>常见的几种保活方案</h1><h2 id="防止被杀死"><a href="#防止被杀死" class="headerlink" title="防止被杀死"></a>防止被杀死</h2><ul>
+<li><p>降低oom_adj的值，提高进程优先级，减少内存占用。<br>如锁屏时候进程中开启一个像素的透明Activity，这样进程变为前台进程防止被杀死。</p>
+</li>
+<li><p>前台服务，使用Android的一个通知栏的bug，调用startForegound发送一个空的notification，在通知栏没有任何通知，而且进程同样处于低oom_adj状态。4.3以后通过开两个service绑定到同一个通知ID，然后干掉其中一个移除通知显示，保留前台服务（Android7.1修复了这个漏洞）。</p>
+</li>
+</ul>
+<ul>
+<li>业务多进程实现，保持单进程最小内存占用，增大存活几率。目前主流应用大多采用多进程的方式</li>
+</ul>
+<h2 id="如何拉活"><a href="#如何拉活" class="headerlink" title="如何拉活"></a>如何拉活</h2><p><strong>1、利用系统广播拉活（ 开机、网络变化、文件挂载等）</strong></p>
+<blockquote>
+<p>缺点：可能被安全软件禁用，不可控，不能保证立即拉活（程序被强制干掉，不会接收到广播）。同时,Android N删除了三项隐式广播，后续不排除会删除其他系统广播，所以在开发过程中应该减少对系统广播的依赖。</p>
+<p>解决：第三方相互唤醒，很多大厂都采用该方案。</p>
+</blockquote>
+<p><strong>2、利用系统service机制拉活。</strong><br>onStartCommand方法必须具有一个整形的返回（START_STICKY），这个整形的返回值用来告诉系统在服务启动完毕后，被杀死后对应的操作。也可以在onDestroy方法中重建。</p>
+<blockquote>
+<p>缺点：<br>1、内存不足，回收后，尝试重新创建。<br>2、多次kill后不会拉活。<br>3、强制kill后 不会重启</p>
+</blockquote>
+<p><strong>3、进程守护。</strong><br>利用native进程拉活（5.0后不可靠，主进程和子进程一起杀死）</p>
+<ul>
+<li>fork新进程进行守护，轮训定时器判断</li>
+<li>主进程中创建监控并持有文件锁，新进程中申请文件锁被阻塞 ，获得锁则拉活.</li>
+</ul>
+<blockquote>
+<p>解决：可以想办法让子进程脱离主进程所属进程组，切断联系。<a href="http://blog.csdn.net/yyh352091626/article/details/50542554" target="_blank" rel="external">http://blog.csdn.net/yyh352091626/article/details/50542554</a></p>
+</blockquote>
+<p><strong>4、JobSheduler机制拉活（5.0后的替代方案）</strong></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>以上几种保活方案并不是完全可靠，只能降低被杀死的概率。系统有自己特定的进程管理方式，官方不推荐使用各类保活手段，除非强烈的产品需求，各种利用系统漏洞的保活方案一定要慎用，保活会产生一些性能和电量的消耗，甚至引发不可预知的风险。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/进程保活/" rel="tag"># 进程保活</a>
+          
+            <a href="/tags/进程优先级/" rel="tag"># 进程优先级</a>
+          
+            <a href="/tags/进程回收/" rel="tag"># 进程回收</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/05/Android系统下编译模式的演变/" rel="next" title="Android系统下编译模式的演变">
+                <i class="fa fa-chevron-left"></i> Android系统下编译模式的演变
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpeg"
+               alt="潘威" />
+          <p class="site-author-name" itemprop="name">潘威</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Android进程的优先级"><span class="nav-number">1.</span> <span class="nav-text">Android进程的优先级</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Android进程的回收策略"><span class="nav-number">2.</span> <span class="nav-text">Android进程的回收策略</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见的几种保活方案"><span class="nav-number">3.</span> <span class="nav-text">常见的几种保活方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#防止被杀死"><span class="nav-number">3.1.</span> <span class="nav-text">防止被杀死</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何拉活"><span class="nav-number">3.2.</span> <span class="nav-text">如何拉活</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">潘威</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
