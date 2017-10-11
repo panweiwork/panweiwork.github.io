@@ -197,12 +197,22 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
-            关于
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
           </a>
         </li>
       
@@ -213,6 +223,16 @@
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
             归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
           </a>
         </li>
       
@@ -348,7 +368,7 @@
         
           
             <p>最近在对项目中的Notification和短链跳转进行优化，APP退出之后，从外部进入目标页面，避免直接返回到桌面。Android系统采用任务栈来管理Activity。</p>
-<p><img src="../images/notification/backstack.png" alt="任务栈"></p>
+<p><img src="/images/notification/backstack.png" alt="任务栈"></p>
 <p>目前返回是统一指向主页面，实现方式无非是两种：一是先启动再跳转，二先跳转目标页然后返回主页。</p>
 <p>具体方案如下：</p>
 <h2 id="一、TaskStackBuilder"><a href="#一、TaskStackBuilder" class="headerlink" title="一、TaskStackBuilder"></a>一、TaskStackBuilder</h2><p>用于构造返回任务栈，仅支持22以上的版本。<br>在AndroidManifest.xml配置Activity关系</p>
@@ -369,7 +389,7 @@ stackBuilder.addNextIntent(noticeIntent);
 
 PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 </code></pre><h2 id="二、PendingIntent-getActivities"><a href="#二、PendingIntent-getActivities" class="headerlink" title="二、PendingIntent.getActivities()"></a>二、PendingIntent.getActivities()</h2><p>先看看官方的解释：</p>
-<p><img src="../images/notification/getActivities.jpeg" alt="getActivities"></p>
+<p><img src="/images/notification/getActivities.jpeg" alt="getActivities"></p>
 <p>首先需要构建一个Intent数组，其中第一个Intent对象将会被额外的启动一个栈（启动模式设置为singleTask），所以将HomeActivity设置为intents[0]对象.</p>
 <p>而intents数组中最后一个，将作为PendIntent的关键，也就是点击之后需要跳转的目标页面。</p>
 <p>代码：</p>
@@ -3322,19 +3342,19 @@ void addNewEntry(K key, V value, int hash, int index) {
 
           
             <div class="site-state-item site-state-categories">
-              
+              <a href="/categories">
                 <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">分类</span>
-              
+              </a>
             </div>
           
 
           
             <div class="site-state-item site-state-tags">
-              
+              <a href="/tags">
                 <span class="site-state-item-count">19</span>
                 <span class="site-state-item-name">标签</span>
-              
+              </a>
             </div>
           
 
@@ -3510,6 +3530,21 @@ void addNewEntry(K key, V value, int hash, int index) {
   
 
   
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
 
   
 
