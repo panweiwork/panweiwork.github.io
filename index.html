@@ -347,38 +347,46 @@
       
         
           
-            <p>最近在对项目中的通知跳转逻辑进行优化，APP退出之后，从通知直接进入目标页面，之前会直接返回到桌面。为了优化用户体验，返回时应该跳转到APP主页面，实现方式有如下几种：</p>
-<h2 id="一、TaskStackBuilder"><a href="#一、TaskStackBuilder" class="headerlink" title="一、TaskStackBuilder"></a>一、TaskStackBuilder</h2><p>在AndroidManifest.xml配置Activity关系</p>
-<pre><code>&lt;activity android:name=&quot;.MessageActivity&quot;
-      android:parentActivityName=&quot;.MainActivity&quot;/&gt;
-</code></pre><p>代码</p>
+            <p>最近在对项目中的Notification和短链跳转进行优化，APP退出之后，从外部进入目标页面，避免直接返回到桌面。Android系统采用任务栈来管理Activity。</p>
+<p><img src="../images/notification/backstack.png" alt="任务栈"></p>
+<p>目前返回是统一指向主页面，实现方式无非是两种：一是先启动再跳转，二先跳转目标页然后返回主页。</p>
+<p>具体方案如下：</p>
+<h2 id="一、TaskStackBuilder"><a href="#一、TaskStackBuilder" class="headerlink" title="一、TaskStackBuilder"></a>一、TaskStackBuilder</h2><p>用于构造返回任务栈，仅支持22以上的版本。<br>在AndroidManifest.xml配置Activity关系</p>
+<pre><code>&lt;activity android:name=&quot;.NoticesActivity&quot;
+      android:parentActivityName=&quot;.HomeActivity&quot;/&gt;
+</code></pre><p>系统会读取该属性，以确定当用户返回时应该启动哪一个Activity。</p>
+<p>代码</p>
 <pre><code>//启动通知Activity时，拉起主页面Activity
-Intent msgIntent = new Intent();
-msgIntent.setClass(this, MessageActivity.class);
+Intent noticeIntent = new Intent();
+noticeIntent.setClass(this, NoticesActivity.class);
 
 //创建返回栈
 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 //添加Activity到返回栈
-stackBuilder.addParentStack(MainActivity.class);
+stackBuilder.addParentStack(HomeActivity.class);
 //添加Intent到栈顶
-stackBuilder.addNextIntent(msgIntent);
+stackBuilder.addNextIntent(noticeIntent);
 
 PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-</code></pre><h2 id="二、PendingIntent-getActivities"><a href="#二、PendingIntent-getActivities" class="headerlink" title="二、PendingIntent.getActivities()"></a>二、PendingIntent.getActivities()</h2><p>代码：</p>
-<pre><code>Intent msgIntent = new Intent();
-    Intent mainIntent = new Intent();
-    msgIntent.setClass(this, MessageActivity.class);
-    mainIntent.setClass(this, MainActivity.class);
-    //注意此处的顺序
-    Intent[] intents = new Intent[]{mainIntent, msgIntent};
-    PendingIntent pendingIntent = PendingIntent.
-            getActivities(this, 0, intents, PendingIntent.FLAG_UPDATE_CURRENT);
+</code></pre><h2 id="二、PendingIntent-getActivities"><a href="#二、PendingIntent-getActivities" class="headerlink" title="二、PendingIntent.getActivities()"></a>二、PendingIntent.getActivities()</h2><p>先看看官方的解释：</p>
+<p><img src="../images/notification/getActivities.jpeg" alt="getActivities"></p>
+<p>首先需要构建一个Intent数组，其中第一个Intent对象将会被额外的启动一个栈（启动模式设置为singleTask），所以将HomeActivity设置为intents[0]对象.</p>
+<p>而intents数组中最后一个，将作为PendIntent的关键，也就是点击之后需要跳转的目标页面。</p>
+<p>代码：</p>
+<pre><code>Intent noticeIntent = new Intent();
+Intent homeIntent = new Intent();
+noticeIntent.setClass(this, NoticesActivity.class);
+homeIntent.setClass(this, HomeActivity.class);
+//按顺序排列
+Intent[] intents = new Intent[]{homeIntent, noticeIntent};
+PendingIntent pendingIntent = PendingIntent.
+        getActivities(this, 0, intents, PendingIntent.FLAG_UPDATE_CURRENT);
 </code></pre><h2 id="三、启动多个页面"><a href="#三、启动多个页面" class="headerlink" title="三、启动多个页面"></a>三、启动多个页面</h2><p>1、过渡页中一次性启动多个页面</p>
-<pre><code>Intent[] intents = {mainIntent, msgIntent};
+<pre><code>Intent[] intents = {homeIntent, noticeIntent};
 context.startActivities(intents);
-</code></pre><p>2、在页面中依次按顺序启动页面，由传入参数控制</p>
+</code></pre><p>2、在页面中依次按顺序启动页面，并管理传入的参数，实现不同目标页的跳转（稍微复杂）</p>
 <h2 id="四、加一个flag，重构返回逻辑（实现简单）"><a href="#四、加一个flag，重构返回逻辑（实现简单）" class="headerlink" title="四、加一个flag，重构返回逻辑（实现简单）"></a>四、加一个flag，重构返回逻辑（实现简单）</h2><p>代码：</p>
-<pre><code>Intent msgIntent =new Intent(context,MessageActivity.class);
+<pre><code>Intent msgIntent =new Intent(context,ProjectDetailHomeActivity.class);
 //判断是否是点击notification后到的详细界面
 startIntent.putExtra(&quot;notificationFlag&quot;,true);
 </code></pre><p>重写BaseActivity的返回逻辑</p>
@@ -388,7 +396,11 @@ if(notificationFlag){
      startActivity(intent);
      finish();
 }
-</code></pre><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在项目中，不会直接打开目标详情页，中间还需经过一个过度组件来准备数据，所以方案一、二排除。由于通知类型较多，需要处理较多的目标页面，方案三实现略微复杂。最后采用了方案四！</p>
+</code></pre><p>也可以重写Activity的onBackPressed（）方法，判断当前Activity是否处于任务栈的底部，如果是则跳转首页，否则正常返回。</p>
+<blockquote>
+<p>注意：为了确保Activity处于栈底，应该把启动模式设置为singleTask。</p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在项目中无法直接打开目标详情页，中间还需经过一个过度组件来准备数据，和相关初始化工作（权限、网络通信、状态更新、未登录等），所以方案一、二排除。由于通知类型较多，需要改造较多的目标页面，并对不同的flag进行管理，方案三实现略微复杂。最后采用了方案四！</p>
 
           
         
