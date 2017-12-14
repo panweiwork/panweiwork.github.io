@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="cache," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -87,25 +87,12 @@
 
 
 
-<meta name="description" content="前言最近分析线上日志，发现存在一定量的OutOfMemoryError。由于Android系统对堆内存大小作了限制，不同的设备上这个阈值也会不同，当已分配内存加新分配内存大于堆内存就会导致OOM。虽然Android机型的配置在不断升级，但还是存在着几年前的旧机型，它们的特点是内存小，尤其在涉及大图片加载时很容易出现OOM。
-概述为了避免OOM，程序应该增加可用内存，并及时回收不再使用的对象，降低内">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Android图片缓存分析与优化">
-<meta property="og:url" content="http://yoursite.com/2017/02/22/Android图片缓存分析与优化/index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="个人博客">
+<meta property="og:url" content="http://yoursite.com/page/2/index.html">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="前言最近分析线上日志，发现存在一定量的OutOfMemoryError。由于Android系统对堆内存大小作了限制，不同的设备上这个阈值也会不同，当已分配内存加新分配内存大于堆内存就会导致OOM。虽然Android机型的配置在不断升级，但还是存在着几年前的旧机型，它们的特点是内存小，尤其在涉及大图片加载时很容易出现OOM。
-概述为了避免OOM，程序应该增加可用内存，并及时回收不再使用的对象，降低内">
-<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/photocache/%E8%BD%AF%E5%BC%95%E7%94%A8%E5%BC%8A%E7%AB%AF.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/photocache/%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/photocache/lru%E7%BC%93%E5%AD%98.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/photocache/%E4%BC%98%E5%8C%96%E5%89%8D.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/photocache/%E4%BC%98%E5%8C%96%E5%90%8E.jpg">
-<meta property="og:updated_time" content="2017-04-22T09:19:04.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android图片缓存分析与优化">
-<meta name="twitter:description" content="前言最近分析线上日志，发现存在一定量的OutOfMemoryError。由于Android系统对堆内存大小作了限制，不同的设备上这个阈值也会不同，当已分配内存加新分配内存大于堆内存就会导致OOM。虽然Android机型的配置在不断升级，但还是存在着几年前的旧机型，它们的特点是内存小，尤其在涉及大图片加载时很容易出现OOM。
-概述为了避免OOM，程序应该增加可用内存，并及时回收不再使用的对象，降低内">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/photocache/%E8%BD%AF%E5%BC%95%E7%94%A8%E5%BC%8A%E7%AB%AF.jpg">
+<meta name="twitter:title" content="个人博客">
 
 
 
@@ -133,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/02/22/Android图片缓存分析与优化/"/>
+  <link rel="canonical" href="http://yoursite.com/page/2/"/>
 
 
 
 
 
-  <title> Android图片缓存分析与优化 | 个人博客 </title>
+  <title> 个人博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -164,7 +151,9 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left page-post-detail ">
+  <div class="container one-collumn sidebar-position-left 
+   page-home 
+ ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -265,9 +254,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-
-  <div id="posts" class="posts-expand">
+  <section id="posts" class="posts-expand">
     
+      
 
   
 
@@ -300,7 +289,10 @@
             
             
               
-                Android图片缓存分析与优化
+                
+                <a class="post-title-link" href="/2017/02/22/Android图片缓存分析与优化/" itemprop="url">
+                  Android图片缓存分析与优化
+                </a>
               
             
           </h2>
@@ -373,7 +365,9 @@
       
 
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近分析线上日志，发现存在一定量的OutOfMemoryError。由于Android系统对堆内存大小作了限制，不同的设备上这个阈值也会不同，当已分配内存加新分配内存大于堆内存就会导致OOM。虽然Android机型的配置在不断升级，但还是存在着几年前的旧机型，它们的特点是内存小，尤其在涉及大图片加载时很容易出现OOM。</p>
+        
+          
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近分析线上日志，发现存在一定量的OutOfMemoryError。由于Android系统对堆内存大小作了限制，不同的设备上这个阈值也会不同，当已分配内存加新分配内存大于堆内存就会导致OOM。虽然Android机型的配置在不断升级，但还是存在着几年前的旧机型，它们的特点是内存小，尤其在涉及大图片加载时很容易出现OOM。</p>
 <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>为了避免OOM，程序应该增加可用内存，并及时回收不再使用的对象，降低内存占用。可以从以下几个方面去考虑：</p>
 <p><strong>1、对图片进行处理，如图片裁剪和压缩。</strong></p>
 <p>使用缩略图来提高加载速度和降低内存占用。根据控件大小对图片进行裁剪，减少不必要内存浪费。我们的项目中使用了NOS提供的图片处理服务，它提供了非常强大的云处理功能，在开发过程中根据实际需要生成请求链接，获取不同尺寸的图片，实现图片裁剪。同时使用BitmapFactory.Options属性，通过设置采样率, 减少Bitmap的像素。</p>
@@ -670,66 +664,43 @@ void addNewEntry(K key, V value, int hash, int index) {
 <p><a href="http://blog.chinaunix.net/uid-26930580-id-4138306.html" target="_blank" rel="external">http://blog.chinaunix.net/uid-26930580-id-4138306.html</a></p>
 <p><a href="https://developer.android.com/index.html" target="_blank" rel="external">https://developer.android.com/index.html</a></p>
 
+          
+        
       
     </div>
 
     <div>
       
-        
-
-      
     </div>
 
     <div>
-      
-        
-
       
     </div>
 
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/cache/" rel="tag"># cache</a>
-          
-        </div>
+
       
 
       
-        
-      
 
       
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/02/28/实现多样式富文本/" rel="prev" title="如何实现多样式富文本">
-                如何实现多样式富文本 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
       
-
-      
+        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
+    
+  </section>
 
-    <div class="post-spread">
-      
-    </div>
-  </div>
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+  </nav>
+
 
           
           </div>
@@ -737,10 +708,6 @@ void addNewEntry(K key, V value, int hash, int index) {
 
 
           
-  <div class="comments" id="comments">
-    
-  </div>
-
 
         </div>
         
@@ -760,17 +727,8 @@ void addNewEntry(K key, V value, int hash, int index) {
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/me.jpeg"
@@ -826,22 +784,6 @@ void addNewEntry(K key, V value, int hash, int index) {
 
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">2.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基于LRUCache的缓存"><span class="nav-number">3.</span> <span class="nav-text">基于LRUCache的缓存</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码分析与实现"><span class="nav-number">4.</span> <span class="nav-text">代码分析与实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#测试"><span class="nav-number">5.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
     </div>
@@ -948,10 +890,6 @@ void addNewEntry(K key, V value, int hash, int index) {
 
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
-
-
 
   
 

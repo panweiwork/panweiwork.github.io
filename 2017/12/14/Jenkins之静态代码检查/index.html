@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Kotlin,Java," />
+  <meta name="keywords" content="代码检查,Jenkins," />
 
 
 
@@ -87,19 +87,24 @@
 
 
 
-<meta name="description" content="Kotlin是什么今年Google I/O 大会正式确立了Kotlin的地位，作为一名Android开发者，一定要紧跟Google的步伐。
-Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码高度相似。语法上和Groovy、Javascript都很类似，非常容易上手。——IntelliJ IDEA由JetBrains开发(Android Studio基于它的插件实现) ，Kotl">
+<meta name="description" content="编码过程中不可避免会产生一些错误，如何借助工具来发现这些问题，帮助我们有效的改进代码质量。最近在项目中接入了Checksytle、Findbugs、PMD 和 Android Lint等自动化工具，AndroidStudio中都有对应的插件。本文只介绍Gradle方式，Gradle Task配合Jenkins来实时执行任务检查，方便后续的日志追踪。
+首先，在build.gradle文件中添加：
+a">
 <meta property="og:type" content="article">
-<meta property="og:title" content="从Java到Kotlin">
-<meta property="og:url" content="http://yoursite.com/2017/06/01/从Java到Kotlin/index.html">
+<meta property="og:title" content="Jenkins之静态代码检查">
+<meta property="og:url" content="http://yoursite.com/2017/12/14/Jenkins之静态代码检查/index.html">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="Kotlin是什么今年Google I/O 大会正式确立了Kotlin的地位，作为一名Android开发者，一定要紧跟Google的步伐。
-Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码高度相似。语法上和Groovy、Javascript都很类似，非常容易上手。——IntelliJ IDEA由JetBrains开发(Android Studio基于它的插件实现) ，Kotl">
-<meta property="og:updated_time" content="2017-06-01T11:04:49.000Z">
+<meta property="og:description" content="编码过程中不可避免会产生一些错误，如何借助工具来发现这些问题，帮助我们有效的改进代码质量。最近在项目中接入了Checksytle、Findbugs、PMD 和 Android Lint等自动化工具，AndroidStudio中都有对应的插件。本文只介绍Gradle方式，Gradle Task配合Jenkins来实时执行任务检查，方便后续的日志追踪。
+首先，在build.gradle文件中添加：
+a">
+<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/CodeCheck/Jenkins-codecheck.jpeg">
+<meta property="og:updated_time" content="2017-12-14T12:05:21.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="从Java到Kotlin">
-<meta name="twitter:description" content="Kotlin是什么今年Google I/O 大会正式确立了Kotlin的地位，作为一名Android开发者，一定要紧跟Google的步伐。
-Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码高度相似。语法上和Groovy、Javascript都很类似，非常容易上手。——IntelliJ IDEA由JetBrains开发(Android Studio基于它的插件实现) ，Kotl">
+<meta name="twitter:title" content="Jenkins之静态代码检查">
+<meta name="twitter:description" content="编码过程中不可避免会产生一些错误，如何借助工具来发现这些问题，帮助我们有效的改进代码质量。最近在项目中接入了Checksytle、Findbugs、PMD 和 Android Lint等自动化工具，AndroidStudio中都有对应的插件。本文只介绍Gradle方式，Gradle Task配合Jenkins来实时执行任务检查，方便后续的日志追踪。
+首先，在build.gradle文件中添加：
+a">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/CodeCheck/Jenkins-codecheck.jpeg">
 
 
 
@@ -127,13 +132,13 @@ Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码�
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/06/01/从Java到Kotlin/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/12/14/Jenkins之静态代码检查/"/>
 
 
 
 
 
-  <title> 从Java到Kotlin | 个人博客 </title>
+  <title> Jenkins之静态代码检查 | 个人博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -270,7 +275,7 @@ Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码�
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/01/从Java到Kotlin/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/14/Jenkins之静态代码检查/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="潘威">
@@ -294,7 +299,7 @@ Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码�
             
             
               
-                从Java到Kotlin
+                Jenkins之静态代码检查
               
             
           </h2>
@@ -309,8 +314,8 @@ Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码�
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-01T19:05:06+08:00">
-                2017-06-01
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-14T20:04:56+08:00">
+                2017-12-14
               </time>
             
 
@@ -367,135 +372,125 @@ Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码�
       
 
       
-        <h1 id="Kotlin是什么"><a href="#Kotlin是什么" class="headerlink" title="Kotlin是什么"></a>Kotlin是什么</h1><p>今年Google I/O 大会正式确立了Kotlin的地位，作为一名Android开发者，一定要紧跟Google的步伐。</p>
-<p>Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码高度相似。语法上和Groovy、Javascript都很类似，非常容易上手。——IntelliJ IDEA由JetBrains开发(Android Studio基于它的插件实现) ，Kotlin也是JetBrains创造，所以他们之间存在天然的联系。</p>
-<ul>
-<li><strong>与Java交互性好</strong></li>
-</ul>
-<blockquote>
-<p>Kotlin和Java的交互性很好，可以说是无缝连接。这表现在Kotlin可以自由的引用Java的代码，反之亦然。</p>
-<p>Kotlin可以现有的全部的Java框架和库Java文件可以很轻松的借助IntelliJ的插件转成Kotlin</p>
-</blockquote>
-<ul>
-<li><strong>Kotlin应用广泛</strong></li>
-</ul>
-<blockquote>
-<p>Kotlin具有跨平台性，可以用于服务器端、Android和JavaScript </p>
-<p>在Android应用开发上有着较好的支持，存在Dagger，RxKotlin,Anko等等工具库。目前一些大厂以及开源项目已经使用Kotlin，Java转Kotlin在不久的将来就会全面展开。</p>
-</blockquote>
-<h1 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h1><p><strong>1、语法上(不讲具体的语法，特性)</strong></p>
-<pre><code>//variables and constants
-var currentVersionCode = 1   //变量当前的版本号，类型Int可以根据值推断出来
-var currentVersionName : String = &quot;1.0&quot; //显式标明类型
-val APPNAME = &quot;droidyue.com&quot; //常量APPNAME 类型(String)可以根据值推断出来
+        <p>编码过程中不可避免会产生一些错误，如何借助工具来发现这些问题，帮助我们有效的改进代码质量。最近在项目中接入了Checksytle、Findbugs、PMD 和 Android Lint等自动化工具，AndroidStudio中都有对应的插件。本文只介绍Gradle方式，Gradle Task配合Jenkins来实时执行任务检查，方便后续的日志追踪。</p>
+<p>首先，在build.gradle文件中添加：</p>
+<pre><code>apply plugin: &apos;findbugs&apos;
+apply plugin: &apos;checkstyle&apos;
+apply plugin: &apos;pmd&apos;
+</code></pre><p>接下来配置这些工具。</p>
+<h1 id="Checkstyle"><a href="#Checkstyle" class="headerlink" title="Checkstyle"></a>Checkstyle</h1><p>主要是代码格式、规范的检查，可自定义扫描规则。我之前的一篇<a href="http://note.youdao.com/noteshare?id=3743e5e9baff7566955dc2af45b47b7e" target="_blank" rel="external">文章</a></p>
+<pre><code>task checkstyle(type: Checkstyle) {
+    ignoreFailures true    
+    showViolations = true
+    configFile file(&quot;${project.rootDir}/settings/checkstyle.xml&quot;)
 
-//methods
-fun main(args: Array&lt;String&gt;) {
-    println(args)
-}
+    source &apos;src/main/java&apos;
+    include &apos;**/*.java&apos;
+    exclude &apos;**/gen/**&apos;
+    exclude &apos;**/R.java&apos;
+    exclude &apos;**/BuildConfig.java&apos;
 
-// class
-class MainActivity : AppCompatActivity() {
-
-}
-</code></pre><ul>
-<li>Kotlin支持智能类型转换。</li>
-<li>另外用var表示变量，val表示常量更加的简洁</li>
-<li>方法也很简单（使用fun缩写标识方法）</li>
-<li>类的继承和实现很简单，使用:即可</li>
-<li>Kotlin每个句子都不需要加分号;</li>
-</ul>
-<p><strong>2、简化代码，代码量大大减少。</strong></p>
-<p>Java</p>
-<pre><code>public class User {
-    private String name;
-    private String id;
-
-    public User(String name, String id) {
-        this.name = name;
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-}
-</code></pre><p>Kotlin </p>
-<pre><code>data class User(var name: String, var id: String)
-</code></pre><p> Kotlin 就会创建出一个完整的数据类，并自动生成相应的 equals、hashcode、toString 方法</p>
-<p><strong>3、便于扩展，现有类的基础上，添加一些属性或者方法，无需继承。</strong></p>
-<p>Java</p>
-<pre><code>Button button = findviewbyid(R.id.button)
-button.setOnClickListener(new View.OnClickListener() {
-    @Override public void onClick(View v) {
-        Toast.makeText(this,&quot;hello java&quot;,Toast.LENGTH_SHORT);
-    }
-});
-</code></pre><p>Kotlin</p>
-<pre><code>//支持默认参数值，减少方法重载
-fun Context.toast(message: String, duration:Int = Toast.LENGTH_LONG) {
-    Toast.makeText(this, message, duration).show()
-}
-
-button.setOnClickListener {toast(&quot;hello kotlin&quot;)}
-</code></pre><p><strong>4、安全性</strong></p>
-<p>Java</p>
-<pre><code>public void test(String string) {
-    if (string != null) {
-        char[] chars = string.toCharArray();
-        if (chars.length &gt; 10) {
-            System.out.println(((Character)chars[10]).hashCode());
+    // empty classpath
+    classpath = files()
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        xml {
+            destination &quot;$project.buildDir/reports/checkstyle/checkstyle.xml&quot;
+        }
+        html {
+            destination &quot;$project.buildDir/reports/checkstyle/checkstyle.html&quot;
         }
     }
 }
-</code></pre><p>Kotlin  </p>
-<pre><code>fun testNullSafeOperator(string: String?) {
-    System.out.println(string?.toCharArray()?.getOrNull(10)?.hashCode())
+</code></pre><blockquote>
+<p>若要编写checkstyle.xml文件，请参考<a href="http://checkstyle.sourceforge.net/config.html" target="_blank" rel="external">传送门</a></p>
+</blockquote>
+<h1 id="FindBugs"><a href="#FindBugs" class="headerlink" title="FindBugs"></a>FindBugs</h1><p>FindBugs uses static analysis to inspect Java bytecode for occurrences of bug patterns.</p>
+<p>静态分析方式扫描 Java 字节码，发现其中的可能出现 bug 的代码，它能发现一些常规的逻辑错误。</p>
+<p><strong>注：必须先编译生成class文件，否则会报错</strong></p>
+<pre><code>task findbugs(type: FindBugs,dependsOn: &quot;assembleQaRelease&quot;) {
+    ignoreFailures = true
+    effort = &quot;default&quot;
+    reportLevel = &quot;medium&quot;
+    excludeFilter = new File(&quot;${project.rootDir}/settings/findbugs-android-exclude.xml&quot;)
+    classes = files(&quot;${project.rootDir}/app/build/intermediates/classes&quot;)
+    source = fileTree(&apos;src/main/java/&apos;)
+    classpath = files()
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        xml {
+            destination &quot;$project.buildDir/reports/findbugs/findbugs-output.xml&quot;
+        }
+        html {
+            destination &quot;$project.buildDir/reports/findbugs/findbugs-output.html&quot;
+        }
+    }
 }
-</code></pre><p>Java中不得不写很多防御性的代码，防止出现NullPointerException，Kotlin使用空安全符？来明确对象是否为空，否则编译无法通过。</p>
-<h1 id="怎么用"><a href="#怎么用" class="headerlink" title="怎么用"></a>怎么用</h1><p>Android Studio在3.0版本中直接集成了Kotlin插件，在3.0之下还需手动安装：</p>
-<p><strong>1、在Setting里找到Plugin选项，搜索Kotlin插件。</strong></p>
+</code></pre><blockquote>
+<p>定义过滤文件，请参考 <a href="http://findbugs.sourceforge.net/manual/filter.html" target="_blank" rel="external">传送门</a></p>
+</blockquote>
+<h1 id="PMD"><a href="#PMD" class="headerlink" title="PMD"></a>PMD</h1><p>名字还没有统一的说法，下面是官网找到的几种解释：</p>
 <ul>
-<li>Kotlin：基础插件，对Kotlin的语法支持</li>
-<li><p>Kotlin Android Extensions：可以自动从XML中注入View到activity中，作为属性直接使用，省去了findViewById()和convert view的过程。</p>
-<pre><code>//导入指定布局文件中所有控件属性
-import kotlinx.android.synthetic.main.＜布局＞.*
-</code></pre><p>  ButterKnife可以扔到垃圾桶了。但存在一个问题，对于历史XML布局文件，ViewID的命名方式可能在Java代码中并不友好。解决办法：</p>
-<blockquote>
-<p>1、给布局文件中的viewID rename</p>
-<p>2、扩展Content类，自定义变量名转换映射方法</p>
-<p>3、继续使用findViewById方式。</p>
-</blockquote>
-</li>
+<li>Pretty Much Done</li>
+<li>Project Mess Detector</li>
+<li>Project Monitoring Directives</li>
+<li>Project Meets Deadline</li>
+<li>Programming Mistake Detector</li>
+<li>Pounds Mistakes Dead</li>
+<li>PMD Meaning Discovery (recursion, hooray!)</li>
+<li>Programs of Mass Destruction</li>
+<li>Programming Meticulous coDe</li>
 </ul>
-<p><strong>2、在模块的gradle下加入如下代码：</strong></p>
-<pre><code>apply plugin: &apos;kotlin-android&apos;
-apply plugin: &apos;kotlin-android-extensions&apos;
-</code></pre><p>   <strong>然后在project的gradle下加入：</strong></p>
-<pre><code>classpath &quot;org.jetbrains.kotlin:kotlin-gradle-plugin:$yourversion&quot;
-</code></pre><p><strong>3、编写Kotlin  or Java代码转换</strong></p>
-<p><strong>4、构建和发布用于 Android 的 Kotlin 应用程序</strong></p>
-<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p><strong>1、官方3.0正式版未发布，可能有坑</strong></p>
-<p><strong>2、是否带来效率的提高?</strong></p>
-<blockquote>
-<p>在生成环境中，稳定高于一切。追求新技术，一方面会给团队带来开发和维护上的学习成本，另一方面也要承担未来某些情况下因为对新技术不熟悉而产生未知问题的风险。</p>
-<p>在后面的项目中，部分小模块可以选择性使用。Kotlin的优势会慢慢展现出来的，但是需要一个较为漫长的过渡期。</p>
+<p>它是基于源码的检查，能扫描出废弃变量和对象、空catch语句等。不仅支持Java，还支持JS、XML等其他语言，与FindBugs形成互补。</p>
+<pre><code>task pmd(type: Pmd) {
+    ruleSetFiles = files(&quot;${project.rootDir}/settings/pmd-ruleset.xml&quot;)
+    ignoreFailures = true
+    ruleSets = []
+
+    source &apos;src&apos;
+    include &apos;**/*.java&apos;
+    exclude &apos;**/gen/**&apos;
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        xml {
+            destination &quot;$project.buildDir/reports/pmd/pmd.xml&quot;
+        }
+        html {
+            destination &quot;$project.buildDir/reports/pmd/pmd.html&quot;
+        }
+    }
+}
+</code></pre><blockquote>
+<p>自定义pmd-ruleset.xml文件，可参考 <a href="http://pmd.sourceforge.net/pmd-4.3.0/howtomakearuleset.html" target="_blank" rel="external">传送门</a></p>
 </blockquote>
-<h1 id="学习资料"><a href="#学习资料" class="headerlink" title="学习资料"></a>学习资料</h1><p>官方网站<br>链接：<a href="http://kotlinlang.org/" target="_blank" rel="external">http://kotlinlang.org/</a></p>
-<p>在线代码环境<br>链接：<a href="https://try.kotlinlang.org/" target="_blank" rel="external">https://try.kotlinlang.org/</a> </p>
-<p>官方GitHub<br>链接：<a href="https://github.com/JetBrains/kotlin" target="_blank" rel="external">https://github.com/JetBrains/kotlin</a></p>
+<h1 id="Android-Lint"><a href="#Android-Lint" class="headerlink" title="Android Lint"></a>Android Lint</h1><p>专门为Android工程打造的静态代码分析工具，除了检查潜在的问题外，还能对Android的资源文件、废弃无用资源进行扫描。</p>
+<pre><code>android {
+    lintOptions {
+        checkReleaseBuilds true
+        abortOnError true
+        lintConfig file(&quot;lint.xml&quot;)
+        htmlReport true
+        htmlOutput file(&quot;$project.buildDir/reports/lint/lint.html&quot;)
+    }
+}
+</code></pre><blockquote>
+<p>lint.xml文件定义 Lint 检查项，置于 Android 项目的根目录。<a href="https://developer.android.com/studio/write/lint.html" target="_blank" rel="external">传送门</a></p>
+</blockquote>
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>这里要说明的是，FindBugs和PMD有两种格式输出报告，如果同时启用两种输出格式编译会报错，解决办法是关掉其中一种，或者通过配置让脚本执行两遍。一般情况下，配置文件采用官方默认即可，也可根据团队需求自定义规则。</p>
+<p>另外，自动化工具部分规则还存在争议，它能帮我们找出代码缺陷，但扫描结果还需开发人员确认是否修改或选择忽略。为了避免执行中断，建议启用ignoreFailures属性。</p>
+<p>为了管理任务，添加check task的依赖：</p>
+<pre><code>check.dependsOn &apos;checkstyle&apos;, &apos;findbugs&apos;, &apos;pmd&apos;, &apos;lint&apos;
+</code></pre><p>然后输入：</p>
+<pre><code>gradlew check
+</code></pre><p>依次执行上面的任务。</p>
+<p>Jenkins每小时都会去检查代码，如果产生变更则自动触发任务，并在项目面板中显示报告文件。如图：<br><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/CodeCheck/Jenkins-codecheck.jpeg" alt="report"></p>
+<blockquote>
+<p>本文所参考的项目 <a href="https://github.com/bufferapp/android-guidelines" target="_blank" rel="external">传送门</a></p>
+</blockquote>
 
       
     </div>
@@ -519,9 +514,9 @@ apply plugin: &apos;kotlin-android-extensions&apos;
       
         <div class="post-tags">
           
-            <a href="/tags/Kotlin/" rel="tag"># Kotlin</a>
+            <a href="/tags/代码检查/" rel="tag"># 代码检查</a>
           
-            <a href="/tags/Java/" rel="tag"># Java</a>
+            <a href="/tags/Jenkins/" rel="tag"># Jenkins</a>
           
         </div>
       
@@ -534,8 +529,8 @@ apply plugin: &apos;kotlin-android-extensions&apos;
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/03/28/打造一个通用Adapter/" rel="next" title="打造一个通用Adapter">
-                <i class="fa fa-chevron-left"></i> 打造一个通用Adapter
+              <a href="/2017/09/15/通知优化/" rel="next" title="通知优化">
+                <i class="fa fa-chevron-left"></i> 通知优化
               </a>
             
           </div>
@@ -543,10 +538,6 @@ apply plugin: &apos;kotlin-android-extensions&apos;
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/06/12/InputMethodManger导致的内存泄漏问题/" rel="prev" title="InputMethodManger导致的内存泄漏问题">
-                InputMethodManger导致的内存泄漏问题 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -669,7 +660,7 @@ apply plugin: &apos;kotlin-android-extensions&apos;
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kotlin是什么"><span class="nav-number">1.</span> <span class="nav-text">Kotlin是什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优势"><span class="nav-number">2.</span> <span class="nav-text">优势</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#怎么用"><span class="nav-number">3.</span> <span class="nav-text">怎么用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充"><span class="nav-number">4.</span> <span class="nav-text">补充</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#学习资料"><span class="nav-number">5.</span> <span class="nav-text">学习资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Checkstyle"><span class="nav-number">1.</span> <span class="nav-text">Checkstyle</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FindBugs"><span class="nav-number">2.</span> <span class="nav-text">FindBugs</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PMD"><span class="nav-number">3.</span> <span class="nav-text">PMD</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Android-Lint"><span class="nav-number">4.</span> <span class="nav-text">Android Lint</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最后"><span class="nav-number">5.</span> <span class="nav-text">最后</span></a></li></ol></div>
             
 
           </div>
