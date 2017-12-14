@@ -475,7 +475,7 @@ apply plugin: &apos;pmd&apos;
 </code></pre><blockquote>
 <p>lint.xml文件定义 Lint 检查项，置于 Android 项目的根目录。<a href="https://developer.android.com/studio/write/lint.html" target="_blank" rel="external">传送门</a></p>
 </blockquote>
-<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>这里要说明的是，FindBugs和PMD有两种格式输出报告，如果同时启用两种输出格式编译会报错，解决办法是关掉其中一种，或者通过配置让脚本执行两遍。一般情况下，配置文件采用官方默认即可，也可根据团队需求自定义规则。</p>
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>这里要说明的是，FindBugs和PMD的输出文件有xml和html两种格式，同时启用两种格式会报错，解决办法是关掉其中一种，或者通过配置让脚本执行两遍。一般情况下，配置文件采用官方默认即可，也可根据团队需求自定义规则。</p>
 <p>另外，自动化工具部分规则还存在争议，它能帮我们找出代码缺陷，但扫描结果还需开发人员确认是否修改或选择忽略。为了避免执行中断，建议启用ignoreFailures属性。</p>
 <p>为了管理任务，添加check task的依赖：</p>
 <pre><code>check.dependsOn &apos;checkstyle&apos;, &apos;findbugs&apos;, &apos;pmd&apos;, &apos;lint&apos;
