@@ -1,0 +1,1051 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Kotlin,单元测试," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="今年的 Google I/O 大会上，Google 宣布为 Kotlin 提供最佳支持，未来将成为 Android 的第一语言。最近在项目中已经开始用到，也踩过不少坑，这里做一个阶段性的总结。
+特性Kotlin 作为一种新的 JVM 语言，在设计时就考虑了 Java 互操作性，可以和 Java 代码混着一起写，也可以单独放在 src/main/kotlin 下。为了不破坏现有工程代码，将 Kotl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kotlin重构实践">
+<meta property="og:url" content="http://yoursite.com/2017/12/25/Kotlin重构实践/index.html">
+<meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="今年的 Google I/O 大会上，Google 宣布为 Kotlin 提供最佳支持，未来将成为 Android 的第一语言。最近在项目中已经开始用到，也踩过不少坑，这里做一个阶段性的总结。
+特性Kotlin 作为一种新的 JVM 语言，在设计时就考虑了 Java 互操作性，可以和 Java 代码混着一起写，也可以单独放在 src/main/kotlin 下。为了不破坏现有工程代码，将 Kotl">
+<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/KotlinRefactor/Bim%E7%BB%93%E6%9E%84%E5%9B%BE.png">
+<meta property="og:updated_time" content="2017-12-25T10:41:55.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kotlin重构实践">
+<meta name="twitter:description" content="今年的 Google I/O 大会上，Google 宣布为 Kotlin 提供最佳支持，未来将成为 Android 的第一语言。最近在项目中已经开始用到，也踩过不少坑，这里做一个阶段性的总结。
+特性Kotlin 作为一种新的 JVM 语言，在设计时就考虑了 Java 互操作性，可以和 Java 代码混着一起写，也可以单独放在 src/main/kotlin 下。为了不破坏现有工程代码，将 Kotl">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/KotlinRefactor/Bim%E7%BB%93%E6%9E%84%E5%9B%BE.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/12/25/Kotlin重构实践/"/>
+
+
+
+
+
+  <title> Kotlin重构实践 | 个人博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">个人博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <h1 class="site-subtitle" itemprop="description"></h1>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/25/Kotlin重构实践/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="潘威">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/me.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="个人博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="个人博客" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                Kotlin重构实践
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-25T18:40:56+08:00">
+                2017-12-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>今年的 Google I/O 大会上，Google 宣布为 Kotlin 提供最佳支持，未来将成为 Android 的第一语言。最近在项目中已经开始用到，也踩过不少坑，这里做一个阶段性的总结。</p>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><p>Kotlin 作为一种新的 JVM 语言，在设计时就考虑了 Java 互操作性，可以和 Java 代码混着一起写，也可以单独放在 src/main/kotlin 下。为了不破坏现有工程代码，将 Kotlin 代码单独存放，便于重构和开发。</p>
+<p>举个例子，要使用某个控件，传统的写法是先 findViewById ，然后强转类型拿到引用，如果布局比较复杂，将会看到一大坨恶心代码。Kotlin 可以通过id直接使用控件，所以重构过程中将ButterKnife给淘汰了。。</p>
+<h3 id="Android-Extensions"><a href="#Android-Extensions" class="headerlink" title="Android Extensions"></a>Android Extensions</h3><p>Kotlin 帮我们做了一些事情，只需一行代码</p>
+<pre><code>import kotlinx.android.synthetic.main.＜布局＞.*
+</code></pre><p>便能扩展对应的控件属性。<br>插件实现代码在 plugins/android-extensions 目录下，</p>
+<p><strong>AndroidPackageFragmentProviderExtension.kt</strong></p>
+<pre><code>    // Packages with synthetic properties
+for (variantData in moduleData.variants) {
+    for ((layoutName, layouts) in variantData.layouts) {
+        fun createPackageFragment(fqName: String, forView: Boolean, isDeprecated: Boolean = false) {
+            val resources = layoutXmlFileManager.extractResources(AndroidLayoutGroupData(layoutName, layouts), module)
+            val packageData = AndroidSyntheticPackageData(moduleData, forView, isDeprecated, resources)
+            val packageDescriptor = AndroidSyntheticPackageFragmentDescriptor(
+                    module, FqName(fqName), packageData, lazyContext, storageManager, isExperimental,
+                    lookupTracker, layoutName
+            )
+            packagesToLookupInCompletion += packageDescriptor
+            allPackageDescriptors += packageDescriptor
+        }
+
+        val packageFqName = AndroidConst.SYNTHETIC_PACKAGE + &apos;.&apos; + variantData.variant.name + &apos;.&apos; + layoutName
+
+        createPackageFragment(packageFqName, false)
+        createPackageFragment(packageFqName + &quot;.view&quot;, true)
+    }
+}
+</code></pre><p>packageFqName 表示import的虚拟包名，建立布局文件的引用。解析布局文件的逻辑在 <strong>AndroidLayoutXmlFileManager.kt</strong> 中，看它的 extractResources 方法！</p>
+<pre><code>fun extractResources(layoutGroupFiles: AndroidLayoutGroupData, module: ModuleDescriptor): List&lt;AndroidResource&gt; {
+    return filterDuplicates(doExtractResources(layoutGroupFiles, module))
+}
+...
+protected abstract fun doExtractResources(layoutGroup: AndroidLayoutGroupData, module: ModuleDescriptor): AndroidLayoutGroup
+</code></pre><p>主要逻辑在 doExtractResources 方法中，它其实是一个抽象方法，具体实现在 <strong>IDEAndroidLayoutXmlFileManager.kt</strong></p>
+<pre><code>override fun doExtractResources(layoutGroup: AndroidLayoutGroupData, module: ModuleDescriptor): AndroidLayoutGroup {
+    val layouts = layoutGroup.layouts.map { layout -&gt;
+        val resources = arrayListOf&lt;AndroidResource&gt;()
+        layout.accept(AndroidXmlVisitor { id, widgetType, attribute -&gt;
+            resources += parseAndroidResource(id, widgetType, attribute.valueElement)
+        })
+        AndroidLayout(resources)
+    }
+
+    return AndroidLayoutGroup(layoutGroup.name, layouts)
+}
+</code></pre><p>读取 xml 标签的逻辑在 <strong>AndroidXmlVisitor.kt</strong> 中，上面传入了一个回调方法作为参数，用来记录遍历标签的 Id 和 Tpye 信息。</p>
+<pre><code>class AndroidXmlVisitor(val elementCallback: (ResourceIdentifier, String, XmlAttribute) -&gt; Unit) : XmlElementVisitor() {
+
+    ...
+
+    override fun visitXmlTag(tag: XmlTag?) {
+        val localName = tag?.localName ?: &quot;&quot;
+        if (isWidgetTypeIgnored(localName)) {
+            tag?.acceptChildren(this)
+            return
+        }
+
+        val idAttribute = tag?.getAttribute(AndroidConst.ID_ATTRIBUTE_NO_NAMESPACE, AndroidConst.ANDROID_NAMESPACE)
+        if (idAttribute != null) {
+            val idAttributeValue = idAttribute.value
+            if (idAttributeValue != null) {
+                val xmlType = tag.getAttribute(AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE)?.value ?: localName
+                val name = androidIdToName(idAttributeValue)
+                if (name != null) elementCallback(name, xmlType, idAttribute)
+            }
+        }
+
+        tag?.acceptChildren(this)
+    }
+}
+</code></pre><p>androidIdToName 方法用正则表达式提取出id的名称。代码在 <strong>AndroidConst.kt</strong> 中</p>
+<pre><code>object AndroidConst {
+    fun androidIdToName(id: String): ResourceIdentifier? {
+        val values = AndroidConst.IDENTIFIER_REGEX.matchEntire(id)?.groupValues ?: return null
+        val packageName = values[3]
+        return ResourceIdentifier(values[4], if (packageName.isEmpty()) null else packageName)
+    }
+}
+</code></pre><p>到这里大概就能明白，Activity 中为啥能够直接使用布局中的View了。。</p>
+<h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><p>Kotlin 能够扩展一个类的新功能而无需继承该类，前面介绍了类属性的扩展，那么如何扩展一个类的方法呢？声明一个扩展函数，使用被扩展的类作为前缀，就拿 Context 类来说：</p>
+<pre><code>//ContextExtensions.kt
+inline fun &lt;reified T : Activity&gt; Context.startActivity(
+        params: Map&lt;String, String?&gt;?) {
+    val intent = Intent(this, T::class.java)
+    var setEntry = params?.entries
+    setEntry?.forEach { intent.putExtra(it.key, it.value) }
+    startActivity(intent)
+}
+</code></pre><p>函数在 Kotlin 中作为第一等公民，可以在文件的最顶层声明，无需要像 Java 一样创建一个类来保存。这里 this 关键字对应函数的调用者对象。<br>最后，在 Activity 定义的 startActivity 方法中调用：</p>
+<pre><code>class InviteMemberActivity : BaseActivity(), IView {
+     ...
+    companion object {
+        fun startActivity(context: Context?, prjId: String?, prjName: String?, shortUrl: String?) {
+            context?.let {
+                val params = mapOf(PROJECT_ID to prjId, PROJECT_NAME to prjName, SHORT_URL to shortUrl)
+                it.startActivity&lt;InviteMemberActivity&gt;(params)
+            }
+        }
+    }
+}
+</code></pre><p>说明一下， Kotlin 中没有 static 方法，因此相应的方法应该放在 companion object 中，如果从 Java 中调用这些方法，需要添加 @JvmStatic 注解。另外，let 函数默认将当前对象作为闭包的 it 参数，返回值是函数里面最后一行，或者指定 return。如果上面 context 为 null，let 方法将不会执行！</p>
+<h3 id="数据类"><a href="#数据类" class="headerlink" title="数据类"></a>数据类</h3><p>Kotlin 提供了一种数据类，只需要在 class 前面加上 data 关键字修饰，默认为所有属性实现了 getter、setter、equal、hashcode、toString 等方法，所以直接将项目中的 Lombok 框架给移除了。</p>
+<p>Java 中一个普通的 POJO 可以如下定义：</p>
+<pre><code>//POJO
+data class ProjectDetailDTO(
+    var prjStatus: Int = 0,
+    var prjId: String? = null,
+    var prjTitle: String? = null,
+    var prjLabel: String? = null,
+    var prjDesc: String? = null, 
+    var prjNotice: String? = null,
+     ...
+)
+
+//java
+public class MapperOnData {
+    ...
+    public static ProjectDetailDTO fromPO(ProjectDetailPO src) {
+        if (src == null) {
+            return null;
+        }
+        ProjectDetailDTO dest = new ProjectDetailDTO();
+        ...
+        return dest;
+    } 
+    ...
+}    
+</code></pre><p>这里要注意，数据类不能被 abstract, open, sealed、inner 关键字修饰。为了兼容 MapperOnData 工具类，需要包含一个无参构造函数，所以给所有属性都指定了默认值。</p>
+<p>Kotlin 的语法不仅简洁、高效，同时还支持 Lamada 表达式、操作符、空安全、类型检查与转换等等，实际开发中代码精简行数接近一半。这里我不再一一举例，可以参考 <a href="https://kotlinlang.org/docs/reference/" target="_blank" rel="external">语法</a> 、<a href="https://android.github.io/kotlin-guides/style.html" target="_blank" rel="external">Style guide</a></p>
+<h2 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h2><p>重构是为了优化代码结构，使用上新语言的特性，让代码更容易理解。重构过程中，为了确保业务逻辑不丢失，通过单元测试覆盖所有场景，每次编译都会跑一遍测试用例，只有所有用例通过才能构建成功。</p>
+<p>由于项目的原子性业务逻辑主要集中在 Presenter 和 UseCase 类中，因此也非常方便写测试用例。项目中使用了 Junit + Mockito + Powermock + Robolectric 框架，测试代码编译成 class 文件直接运行在 JVM 上。</p>
+<p>引入 Powermock 是因为它支持 static、final、private 方法的 mock， Powermock 会创建一个新的 MockClassLoader 来加载测试用例，然后修改字节码来实现对 static 、 final 等方法的 mock。</p>
+<blockquote>
+<p>Kotlin 中类、方法都默认为 final 的，除非使用 open 来修饰，否则 mock 桩类会报错。</p>
+</blockquote>
+<p><strong>如何进行测试？</strong></p>
+<p>1、添加依赖：</p>
+<pre><code>testCompile &quot;org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version&quot;
+</code></pre><blockquote>
+<p>提供了4个注解：@Test、 @Ignore、 @BeforeTest 和 @AfterTest，这些注解会映射到相应 JUnit 4 注解</p>
+</blockquote>
+<p>然后在 src/test/resourcesorg/powermock/extensions/configuration.properties 中添加：</p>
+<pre><code>mockito.mock-maker-class=mock-maker-inline
+</code></pre><blockquote>
+<p>注：Powermock 在1.7.0后实现了自己的 PowerMockMaker，目前只是简单代理了 Mockito 的 MockMaker 和修复一些已知 bug。</p>
+</blockquote>
+<p>2、编写测试用例。包括三个部分：</p>
+<ul>
+<li>数据准备。mock桩类、预设条件返回值。</li>
+<li>待测试方法、成员变量调用。</li>
+<li>验证。方法是否被调用、逻辑分支是否覆盖完全、返回值或属性状态是否符合预期。</li>
+</ul>
+<p>3、执行用例。</p>
+<pre><code>./gradlew testDevReleasegUnitTest
+</code></pre><p>我们的 UseCase 类中包含由 Retrofit 框架提供的 Observable，同时封装了 RxJava 的线程管理逻辑。这里使用 RxJava 提供的 TestSubscriber 类来测试，看代码：</p>
+<pre><code>import org.mockito.Mockito.`when` as _when
+
+@Before
+fun setup() {
+    mSubscriber = TestSubscriber()
+}
+
+@Test
+@Throws(Exception::class)
+fun testSetTabRemind_Person_Successs() {
+       //1、准备
+    _when(mRepository.updateMyTabRemindUsingPOST(ArgumentMatchers.anyString())).thenReturn(Observable.just(true))
+
+    //2、调用
+    mUseCase.setParam(ArgumentMatchers.anyString(), TabPerson)
+    mUseCase.execute(mSubscriber)
+    mSubscriber.awaitTerminalEvent()
+
+    //3、验证
+    verify&lt;IRepository&gt;(mRepository, never()).updateToDoTabRemindUsingPOST(ArgumentMatchers.anyString())
+    verify&lt;IRepository&gt;(mRepository, times(1)).updateMyTabRemindUsingPOST(ArgumentMatchers.anyString())
+    mSubscriber.assertNoErrors()
+    mSubscriber.assertValue(true)
+    mSubscriber.assertCompleted()
+}
+</code></pre><blockquote>
+<p>由于 when 是 Kotlin 的保留关键字，所以对方法名做了转换 <code>when</code> as _when</p>
+</blockquote>
+<p>下面测试 MyProjectPresenter 的一个方法：</p>
+<pre><code>@Before
+override fun setUp() {
+    super.setUp()
+    view = PowerMockito.mock(IMyProjectView::class.java)
+    mHomeUseCase = PowerMockito.spy(HomeUseCase())
+    mPresenter = PowerMockito.spy(MyProjectPresenter())
+
+    mPresenter.mMyProjectFragment = view
+    mPresenter.mHomeUseCase = mHomeUseCase
+}
+
+@Test
+@PrepareForTest(AppInfo::class)
+fun testGetMyProjects_WhenLoadData_ThenSuccess() {
+       //1、准备
+    PowerMockito.mockStatic(AppInfo::class.java)
+    var appInfo = PowerMockito.mock(AppInfo::class.java)
+    PowerMockito.`when`(appInfo.userId).thenReturn(&quot;123&quot;)
+    PowerMockito.`when`(AppInfo.getInstance()).thenReturn(appInfo)
+
+    var projectDetail = ProjectDetailDTO()
+    var list = ArrayList&lt;ProjectDetailDTO&gt;()
+    list.add(projectDetail)
+    mockUcBusiness(mHomeUseCase, Observable.just(list))
+
+    //2、调用
+    mPresenter.getMyProjects()
+
+    //3、验证
+    verifyBusiness(mHomeUseCase)
+    verify(view).hideInitial()
+    verify(view).refreshComplete()
+    verify(view).render(any())
+}
+</code></pre><p>另外，测试用例不可避免会调用Android系统的API，在编译阶段我们依赖的是 android.jar，它没有任何实现，所有方法都是 throw new RuntimeException(“Stub!”)，只有运行在真实的Android系统上才会去加载 Framework 层的实现代码。那么运行在 JVM 上的测试代码便会出错，如果采用Mock桩类的方式，用例会比较繁琐。所以又引入 Robolectric 来解决这个问题，它实现了一套能运行在 JVM 上的 Android Shadow 代码，模拟系统 API 的调用过程。</p>
+<h2 id="Dagger、Retrofit-amp-RxJava"><a href="#Dagger、Retrofit-amp-RxJava" class="headerlink" title="Dagger、Retrofit &amp; RxJava"></a>Dagger、Retrofit &amp; RxJava</h2><p>Kotlin 依然支持 Retrofit、RxJava、Dagger2 等开源框架。通过 kapt 编译器插件支持注解处理器，kapt 同样能够处理 Java 文件，是时候替换掉默认的 annotationProcessor 了。下面介绍如何使用 Dagger2：</p>
+<p>在 build.gradle 中添加：</p>
+<pre><code>apply plugin: &apos;kotlin-kapt&apos;
+dependencies {
+    kapt &quot;com.google.dagger:dagger-compiler:${DAGGER_VERSION}&quot;
+ }
+</code></pre><p>先实现主模块！</p>
+<p><strong>ApplicationComponent</strong></p>
+<pre><code>//java
+@Singleton
+@Component(modules = { ApplicationModule.class })
+public interface ApplicationComponent {
+    void inject(BimApplication application);
+    ...
+}
+</code></pre><p><strong>ApplicationModule</strong></p>
+<pre><code>@Module
+class ApplicationModule(val application: BimApplication) {
+    @Provides
+    fun provideBimApplication() = application
+
+     @Provides
+    fun provideBimRetrofit(okHttpClient: OkHttpClient): Retrofit{
+        ...
+    }
+     ...
+}
+</code></pre><p>在 BimApplication 的 OnCreat 方法中注入：</p>
+<pre><code>//java
+DaggerApplicationComponent.builder()
+            .applicationModule(new ApplicationModule(this))
+            .build().inject(this)
+</code></pre><p>其中，ApplicationModule 提供全局使用的实例对象。</p>
+<p>接下来，在 Activity 的生命周期内实现分模块：</p>
+<p>定义 Base Module 类 <strong>AbsActivityModule</strong></p>
+<pre><code>@Module
+abstract class AbsActivityModule&lt;T : Activity&gt;(@JvmField var mActivity: T) {
+
+    @Provides
+    fun provideHostActivity(): T {
+        return mActivity
+    }
+}
+</code></pre><p><strong>ProjectNoticeComponent</strong></p>
+<pre><code>@PerActivity
+@Component(dependencies = [ApplicationComponent::class], modules = [ProjectNoticeComponent.ProjectNoticeModule::class])
+interface ProjectNoticeComponent : MembersInjector&lt;ProjectNoticeActivity&gt; {
+
+    @Module
+    class ProjectNoticeModule(activity: ProjectNoticeActivity) : AbsActivityModule&lt;ProjectNoticeActivity&gt;(activity)
+}
+</code></pre><blockquote>
+<p>与Java不同，Kotlin 中默认为静态内部类，成员内部类则用 inner 关键字修饰。</p>
+</blockquote>
+<p>为了方便，将 Activity 的 Component 和 Module 放在了一起。最后，Activity中注入：</p>
+<pre><code>class ProjectNoticeActivity : BaseActivity(), IProjectNoticeView {
+    override fun onCreate(savedInstanceState: Bundle?) {
+           super.onCreate(savedInstanceState)
+        DaggerProjectNoticeComponent.builder()
+                .applicationComponent(applicationComponent)
+                .projectNoticeModule(ProjectNoticeComponent.ProjectNoticeModule(this))
+                .build()
+                .injectMembers(this)
+    }
+</code></pre><p>Kotlin 中使用 Dagger2 是不是非常简单？Module 负责生产对象，需要使用的地方直接 @Inject 即可，项目中所有的 Presenter 和 UseCase 都是可以直接使用的，让代码进一步解耦。</p>
+<p>第一节中我们使用 data 关键字定义了数据类，它可以用来承载 Json 转换过来的 Response 数据。下面将实现一个标准的网络请求。</p>
+<p>创建一个API Interface文件 <strong>BimApi.kt</strong>:</p>
+<pre><code>interface BimApi {
+    ...
+    @FormUrlEncoded
+    @POST(&quot;api/m/project/modify&quot;)
+    fun modifyProject(@Field(&quot;prjId&quot;) prjId: String?, @Field(&quot;prjTitle&quot;) prjTitle: String?,
+                      @Field(&quot;prjNotice&quot;) prjNotice: String?): Observable&lt;ProjectDetailDTO&gt;
+}
+</code></pre><p>使用 Dagger 注入全局的 Retrofit 对象：</p>
+<pre><code>@Singleton
+class KCloudDataStore
+@Inject
+constructor(retrofit: Retrofit){
+    ...
+    fun modifyProject(prjId: String?, prjTitle: String?, prjNotice: String?): Observable&lt;ProjectDetailDTO&gt; {
+        return retrofit.create(BimApi::class.java).modifyProject(prjId, prjTitle, prjNotice)
+    }
+}
+</code></pre><p>实现了一个访问网络的方法供上层调用，并且采用 RxJava 来管理异步线程。如图：</p>
+<p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/KotlinRefactor/Bim%E7%BB%93%E6%9E%84%E5%9B%BE.png" alt="结构图"></p>
+<p>从网络层拿到 Observable 对象，然后在 UseCase 中 subscribe </p>
+<pre><code>Observable&lt;ProjectDetailDTO&gt; 
+    .subscribeOn(Schedulers.io())
+    .observeOn(AndroidSchedulers.mainThread())
+    .subscribe (object : DefaultSubscriber&lt;ProjectDetailDTO&gt;() {
+        override fun onNext(projectDetailDTO: ProjectDetailDTO?) {
+            super.onNext(projectDetailDTO)
+            //UI Thread
+            //TODO
+        }
+    })
+</code></pre><blockquote>
+<p>object 关键字声明匿名内部类</p>
+</blockquote>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>目前，新的功能已完全使用 Kotlin 进行开发，底层封装的一些通用模块暂时兼容 Java，后续会不断进行重构，直至完全切换到 Kotlin。同时，新的语言还需要一个熟悉的过程，使用上难免会产生疏忽和偏差，比如，lateinit var修饰的属性，使用前如果未初始化，运行时会报  kotlin.UninitializedPropertyAccessException。</p>
+<p>尚未使用的特性，如反射、协程等。除此之外，Kotlin 几乎可以用于任何类型的开发，无论是服务器端、Web、Android 还是 Native。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://kotlinlang.org/docs/reference" target="_blank" rel="external">https://kotlinlang.org/docs/reference</a></p>
+<p><a href="https://android.github.io/kotlin-guides/style.html" target="_blank" rel="external">https://android.github.io/kotlin-guides/style.html</a></p>
+<p><a href="https://github.com/JetBrains/kotlin" target="_blank" rel="external">https://github.com/JetBrains/kotlin</a></p>
+<p><a href="https://github.com/powermock/powermock/wiki/Mockito" target="_blank" rel="external">https://github.com/powermock/powermock/wiki/Mockito</a></p>
+<p><a href="https://blog.jetbrains.com/kotlin" target="_blank" rel="external">https://blog.jetbrains.com/kotlin</a></p>
+<p><a href="https://android.jlelse.eu/keddit-part-9-unit-test-with-kotlin-mockito-spek-76709812e3b6" target="_blank" rel="external">https://android.jlelse.eu/keddit-part-9-unit-test-with-kotlin-mockito-spek-76709812e3b6</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Kotlin/" rel="tag"># Kotlin</a>
+          
+            <a href="/tags/单元测试/" rel="tag"># 单元测试</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/14/Jenkins之静态代码检查/" rel="next" title="Jenkins之静态代码检查">
+                <i class="fa fa-chevron-left"></i> Jenkins之静态代码检查
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpeg"
+               alt="潘威" />
+          <p class="site-author-name" itemprop="name">潘威</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#特性"><span class="nav-number">1.</span> <span class="nav-text">特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Android-Extensions"><span class="nav-number">1.1.</span> <span class="nav-text">Android Extensions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扩展"><span class="nav-number">1.2.</span> <span class="nav-text">扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据类"><span class="nav-number">1.3.</span> <span class="nav-text">数据类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单元测试"><span class="nav-number">2.</span> <span class="nav-text">单元测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dagger、Retrofit-amp-RxJava"><span class="nav-number">3.</span> <span class="nav-text">Dagger、Retrofit & RxJava</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最后"><span class="nav-number">4.</span> <span class="nav-text">最后</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">潘威</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+</body>
+</html>
