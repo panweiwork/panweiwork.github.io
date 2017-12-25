@@ -96,7 +96,7 @@
 <meta property="og:description" content="今年的 Google I/O 大会上，Google 宣布为 Kotlin 提供最佳支持，未来将成为 Android 的第一语言。最近在项目中已经开始用到，也踩过不少坑，这里做一个阶段性的总结。
 特性Kotlin 作为一种新的 JVM 语言，在设计时就考虑了 Java 互操作性，可以和 Java 代码混着一起写，也可以单独放在 src/main/kotlin 下。为了不破坏现有工程代码，将 Kotl">
 <meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/KotlinRefactor/Bim%E7%BB%93%E6%9E%84%E5%9B%BE.png">
-<meta property="og:updated_time" content="2017-12-25T10:41:55.000Z">
+<meta property="og:updated_time" content="2017-12-25T10:44:45.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kotlin重构实践">
 <meta name="twitter:description" content="今年的 Google I/O 大会上，Google 宣布为 Kotlin 提供最佳支持，未来将成为 Android 的第一语言。最近在项目中已经开始用到，也踩过不少坑，这里做一个阶段性的总结。
@@ -370,9 +370,9 @@
 
       
         <p>今年的 Google I/O 大会上，Google 宣布为 Kotlin 提供最佳支持，未来将成为 Android 的第一语言。最近在项目中已经开始用到，也踩过不少坑，这里做一个阶段性的总结。</p>
-<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><p>Kotlin 作为一种新的 JVM 语言，在设计时就考虑了 Java 互操作性，可以和 Java 代码混着一起写，也可以单独放在 src/main/kotlin 下。为了不破坏现有工程代码，将 Kotlin 代码单独存放，便于重构和开发。</p>
+<h1 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h1><p>Kotlin 作为一种新的 JVM 语言，在设计时就考虑了 Java 互操作性，可以和 Java 代码混着一起写，也可以单独放在 src/main/kotlin 下。为了不破坏现有工程代码，将 Kotlin 代码单独存放，便于重构和开发。</p>
 <p>举个例子，要使用某个控件，传统的写法是先 findViewById ，然后强转类型拿到引用，如果布局比较复杂，将会看到一大坨恶心代码。Kotlin 可以通过id直接使用控件，所以重构过程中将ButterKnife给淘汰了。。</p>
-<h3 id="Android-Extensions"><a href="#Android-Extensions" class="headerlink" title="Android Extensions"></a>Android Extensions</h3><p>Kotlin 帮我们做了一些事情，只需一行代码</p>
+<h2 id="Android-Extensions"><a href="#Android-Extensions" class="headerlink" title="Android Extensions"></a>Android Extensions</h2><p>Kotlin 帮我们做了一些事情，只需一行代码</p>
 <pre><code>import kotlinx.android.synthetic.main.＜布局＞.*
 </code></pre><p>便能扩展对应的控件属性。<br>插件实现代码在 plugins/android-extensions 目录下，</p>
 <p><strong>AndroidPackageFragmentProviderExtension.kt</strong></p>
@@ -448,7 +448,7 @@ protected abstract fun doExtractResources(layoutGroup: AndroidLayoutGroupData, m
     }
 }
 </code></pre><p>到这里大概就能明白，Activity 中为啥能够直接使用布局中的View了。。</p>
-<h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><p>Kotlin 能够扩展一个类的新功能而无需继承该类，前面介绍了类属性的扩展，那么如何扩展一个类的方法呢？声明一个扩展函数，使用被扩展的类作为前缀，就拿 Context 类来说：</p>
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p>Kotlin 能够扩展一个类的新功能而无需继承该类，前面介绍了类属性的扩展，那么如何扩展一个类的方法呢？声明一个扩展函数，使用被扩展的类作为前缀，就拿 Context 类来说：</p>
 <pre><code>//ContextExtensions.kt
 inline fun &lt;reified T : Activity&gt; Context.startActivity(
         params: Map&lt;String, String?&gt;?) {
@@ -470,7 +470,7 @@ inline fun &lt;reified T : Activity&gt; Context.startActivity(
     }
 }
 </code></pre><p>说明一下， Kotlin 中没有 static 方法，因此相应的方法应该放在 companion object 中，如果从 Java 中调用这些方法，需要添加 @JvmStatic 注解。另外，let 函数默认将当前对象作为闭包的 it 参数，返回值是函数里面最后一行，或者指定 return。如果上面 context 为 null，let 方法将不会执行！</p>
-<h3 id="数据类"><a href="#数据类" class="headerlink" title="数据类"></a>数据类</h3><p>Kotlin 提供了一种数据类，只需要在 class 前面加上 data 关键字修饰，默认为所有属性实现了 getter、setter、equal、hashcode、toString 等方法，所以直接将项目中的 Lombok 框架给移除了。</p>
+<h2 id="数据类"><a href="#数据类" class="headerlink" title="数据类"></a>数据类</h2><p>Kotlin 提供了一种数据类，只需要在 class 前面加上 data 关键字修饰，默认为所有属性实现了 getter、setter、equal、hashcode、toString 等方法，所以直接将项目中的 Lombok 框架给移除了。</p>
 <p>Java 中一个普通的 POJO 可以如下定义：</p>
 <pre><code>//POJO
 data class ProjectDetailDTO(
@@ -498,7 +498,7 @@ public class MapperOnData {
 }    
 </code></pre><p>这里要注意，数据类不能被 abstract, open, sealed、inner 关键字修饰。为了兼容 MapperOnData 工具类，需要包含一个无参构造函数，所以给所有属性都指定了默认值。</p>
 <p>Kotlin 的语法不仅简洁、高效，同时还支持 Lamada 表达式、操作符、空安全、类型检查与转换等等，实际开发中代码精简行数接近一半。这里我不再一一举例，可以参考 <a href="https://kotlinlang.org/docs/reference/" target="_blank" rel="external">语法</a> 、<a href="https://android.github.io/kotlin-guides/style.html" target="_blank" rel="external">Style guide</a></p>
-<h2 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h2><p>重构是为了优化代码结构，使用上新语言的特性，让代码更容易理解。重构过程中，为了确保业务逻辑不丢失，通过单元测试覆盖所有场景，每次编译都会跑一遍测试用例，只有所有用例通过才能构建成功。</p>
+<h1 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h1><p>重构是为了优化代码结构，使用上新语言的特性，让代码更容易理解。重构过程中，为了确保业务逻辑不丢失，通过单元测试覆盖所有场景，每次编译都会跑一遍测试用例，只有所有用例通过才能构建成功。</p>
 <p>由于项目的原子性业务逻辑主要集中在 Presenter 和 UseCase 类中，因此也非常方便写测试用例。项目中使用了 Junit + Mockito + Powermock + Robolectric 框架，测试代码编译成 class 文件直接运行在 JVM 上。</p>
 <p>引入 Powermock 是因为它支持 static、final、private 方法的 mock， Powermock 会创建一个新的 MockClassLoader 来加载测试用例，然后修改字节码来实现对 static 、 final 等方法的 mock。</p>
 <blockquote>
@@ -588,7 +588,7 @@ fun testGetMyProjects_WhenLoadData_ThenSuccess() {
     verify(view).render(any())
 }
 </code></pre><p>另外，测试用例不可避免会调用Android系统的API，在编译阶段我们依赖的是 android.jar，它没有任何实现，所有方法都是 throw new RuntimeException(“Stub!”)，只有运行在真实的Android系统上才会去加载 Framework 层的实现代码。那么运行在 JVM 上的测试代码便会出错，如果采用Mock桩类的方式，用例会比较繁琐。所以又引入 Robolectric 来解决这个问题，它实现了一套能运行在 JVM 上的 Android Shadow 代码，模拟系统 API 的调用过程。</p>
-<h2 id="Dagger、Retrofit-amp-RxJava"><a href="#Dagger、Retrofit-amp-RxJava" class="headerlink" title="Dagger、Retrofit &amp; RxJava"></a>Dagger、Retrofit &amp; RxJava</h2><p>Kotlin 依然支持 Retrofit、RxJava、Dagger2 等开源框架。通过 kapt 编译器插件支持注解处理器，kapt 同样能够处理 Java 文件，是时候替换掉默认的 annotationProcessor 了。下面介绍如何使用 Dagger2：</p>
+<h1 id="Dagger、Retrofit-amp-RxJava"><a href="#Dagger、Retrofit-amp-RxJava" class="headerlink" title="Dagger、Retrofit &amp; RxJava"></a>Dagger、Retrofit &amp; RxJava</h1><p>Kotlin 依然支持 Retrofit、RxJava、Dagger2 等开源框架。通过 kapt 编译器插件支持注解处理器，kapt 同样能够处理 Java 文件，是时候替换掉默认的 annotationProcessor 了。下面介绍如何使用 Dagger2：</p>
 <p>在 build.gradle 中添加：</p>
 <pre><code>apply plugin: &apos;kotlin-kapt&apos;
 dependencies {
@@ -688,9 +688,9 @@ constructor(retrofit: Retrofit){
 </code></pre><blockquote>
 <p>object 关键字声明匿名内部类</p>
 </blockquote>
-<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>目前，新的功能已完全使用 Kotlin 进行开发，底层封装的一些通用模块暂时兼容 Java，后续会不断进行重构，直至完全切换到 Kotlin。同时，新的语言还需要一个熟悉的过程，使用上难免会产生疏忽和偏差，比如，lateinit var修饰的属性，使用前如果未初始化，运行时会报  kotlin.UninitializedPropertyAccessException。</p>
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>目前，新的功能已完全使用 Kotlin 进行开发，底层封装的一些通用模块暂时兼容 Java，后续会不断进行重构，直至完全切换到 Kotlin。同时，新的语言还需要一个熟悉的过程，使用上难免会产生疏忽和偏差，比如，lateinit var修饰的属性，使用前如果未初始化，运行时会报  kotlin.UninitializedPropertyAccessException。</p>
 <p>尚未使用的特性，如反射、协程等。除此之外，Kotlin 几乎可以用于任何类型的开发，无论是服务器端、Web、Android 还是 Native。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://kotlinlang.org/docs/reference" target="_blank" rel="external">https://kotlinlang.org/docs/reference</a></p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://kotlinlang.org/docs/reference" target="_blank" rel="external">https://kotlinlang.org/docs/reference</a></p>
 <p><a href="https://android.github.io/kotlin-guides/style.html" target="_blank" rel="external">https://android.github.io/kotlin-guides/style.html</a></p>
 <p><a href="https://github.com/JetBrains/kotlin" target="_blank" rel="external">https://github.com/JetBrains/kotlin</a></p>
 <p><a href="https://github.com/powermock/powermock/wiki/Mockito" target="_blank" rel="external">https://github.com/powermock/powermock/wiki/Mockito</a></p>
@@ -865,7 +865,7 @@ constructor(retrofit: Retrofit){
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#特性"><span class="nav-number">1.</span> <span class="nav-text">特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Android-Extensions"><span class="nav-number">1.1.</span> <span class="nav-text">Android Extensions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扩展"><span class="nav-number">1.2.</span> <span class="nav-text">扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据类"><span class="nav-number">1.3.</span> <span class="nav-text">数据类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单元测试"><span class="nav-number">2.</span> <span class="nav-text">单元测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dagger、Retrofit-amp-RxJava"><span class="nav-number">3.</span> <span class="nav-text">Dagger、Retrofit & RxJava</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最后"><span class="nav-number">4.</span> <span class="nav-text">最后</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#特性"><span class="nav-number">1.</span> <span class="nav-text">特性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-Extensions"><span class="nav-number">1.1.</span> <span class="nav-text">Android Extensions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展"><span class="nav-number">1.2.</span> <span class="nav-text">扩展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据类"><span class="nav-number">1.3.</span> <span class="nav-text">数据类</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#单元测试"><span class="nav-number">2.</span> <span class="nav-text">单元测试</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dagger、Retrofit-amp-RxJava"><span class="nav-number">3.</span> <span class="nav-text">Dagger、Retrofit & RxJava</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最后"><span class="nav-number">4.</span> <span class="nav-text">最后</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
             
 
           </div>
