@@ -265,6 +265,466 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/01/代码重构规范/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="潘威">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/me.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="个人博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="个人博客" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/02/01/代码重构规范/" itemprop="url">
+                  代码重构规范
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-01T16:37:56+08:00">
+                2018-02-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>前阶段赶项目进度，产生了大量不符合规范的代码。</p>
+<ul>
+<li><p><strong>目标：</strong><br>代码结构更清晰，业务逻辑相对独立（P &amp; UC）。不包含任何平台框架的依赖（UI、Storage、IO），不用在设备或模拟器上运行，便于测试和维护。</p>
+</li>
+<li><p><strong>原则（Clean Architecture）：</strong></p>
+<ul>
+<li>框架独立</li>
+<li>可测试</li>
+<li>UI独立</li>
+<li>数据库独立</li>
+<li>所有的外部代理独立</li>
+</ul>
+</li>
+<li><p><strong>代码架构：</strong><br><img src="http://on-img.com/chart_image/5a7132afe4b0812a0efdcf09.png" alt="代码架构"></p>
+</li>
+</ul>
+<h2 id="存在问题"><a href="#存在问题" class="headerlink" title="存在问题"></a>存在问题</h2><p>1、P中不应该直接调用Framework或第三方类库方法</p>
+<p>2、不合理的跨层引用（数据层保持相对独立）</p>
+<p>3、包结构未严格按层划分</p>
+<p>4、不合理命名（包、类）</p>
+<p>5、部分View未定义抽象接口</p>
+<p>6、Constants过于臃肿，常量最好在VO中定义</p>
+<h2 id="调整-Java-amp-Kotlin"><a href="#调整-Java-amp-Kotlin" class="headerlink" title="调整(Java &amp; Kotlin)"></a>调整(Java &amp; Kotlin)</h2><p><strong>1、common包过于臃肿，进行拆分，只放整个应用都使用的公用类。</strong></p>
+<table>
+<thead>
+<tr>
+<th>/common/utils</th>
+<th>-&gt;</th>
+<th>/ui/utils</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ActivityUtils</td>
+<td></td>
+</tr>
+<tr>
+<td>AngleUtil</td>
+<td></td>
+</tr>
+<tr>
+<td>AppUpdateUtils</td>
+<td></td>
+</tr>
+<tr>
+<td>BitmapUtils</td>
+<td></td>
+</tr>
+<tr>
+<td>CameraUtil</td>
+<td></td>
+</tr>
+<tr>
+<td>ContactUtils</td>
+<td></td>
+</tr>
+<tr>
+<td>DialogUtils</td>
+<td></td>
+</tr>
+<tr>
+<td>IMMLeaksUtils</td>
+<td></td>
+</tr>
+<tr>
+<td>ManufacturerUtils</td>
+<td></td>
+</tr>
+<tr>
+<td>OpenCVUtils</td>
+<td></td>
+</tr>
+<tr>
+<td>PermissionUtil</td>
+<td></td>
+</tr>
+<tr>
+<td>QiyuUtils</td>
+<td></td>
+</tr>
+<tr>
+<td>ScreenUtils</td>
+<td></td>
+</tr>
+<tr>
+<td>ToastUtils</td>
+<td></td>
+</tr>
+<tr>
+<td>UrsUtils</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>/common/utils</th>
+<th>-&gt;</th>
+<th>/domain/utils</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NoticesUtils</td>
+<td></td>
+</tr>
+<tr>
+<td>QrUtils</td>
+<td></td>
+</tr>
+<tr>
+<td>ResPermissionUtil</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>/common/utils</th>
+<th>-&gt;</th>
+<th>/data/utils</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LabelUtils</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>/common/utils</th>
+<th>-&gt;</th>
+<th>/ui/navigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RouterUtil</td>
+<td></td>
+</tr>
+<tr>
+<td>ViewerNavigator</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>//接口异常定义，属于数据层</p>
+<table>
+<thead>
+<tr>
+<th>/common/exception</th>
+<th>-&gt;</th>
+<th>/data/exception  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>2、data包只保留该所依赖的类，方便后期剥离。</strong></p>
+<p>//不应该有跟数据层无关的POJO</p>
+<table>
+<thead>
+<tr>
+<th>/data/entity</th>
+<th>-&gt;</th>
+<th>/domain/bo  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ImagePreviewBO</td>
+<td></td>
+</tr>
+<tr>
+<td>BimDataBO</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>//属于业务范畴</p>
+<table>
+<thead>
+<tr>
+<th>/data/mapper</th>
+<th>-&gt;</th>
+<th>/domain/mapper  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MapperOnData</td>
+<td></td>
+</tr>
+<tr>
+<td>MapperOnImagePreview</td>
+<td></td>
+</tr>
+<tr>
+<td>MapperOnYunXin</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>3、ui包内调整</strong></p>
+<table>
+<thead>
+<tr>
+<th>/ui/interfaces</th>
+<th>-&gt;</th>
+<th>/ui/view/contract </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> 所有View接口</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>/ui/view/interfaces</th>
+<th>-&gt;</th>
+<th>/ui/view/adapter/model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TypeFactory</td>
+<td></td>
+</tr>
+<tr>
+<td>ViewHolderFactory</td>
+<td></td>
+</tr>
+<tr>
+<td>ViewTypeModel</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="待完成（W，N，P，G）"><a href="#待完成（W，N，P，G）" class="headerlink" title="待完成（W，N，P，G）"></a>待完成（W，N，P，G）</h2><p><strong>1、Activity和Fragment未定义抽象接口（先改有P的页面）</strong></p>
+<ul>
+<li><p>没有P：</p>
+<pre><code>P
+AboutActivity   
+ImagePreviewActivity
+NoticesActivity
+QrScanErroActivity
+
+G
+CreatePrjSucessActivity 
+ProjectMarkFragment
+ApprovalFileListActivity
+
+W
+CropActivity 
+PhotoPreviewActivity
+WebViewActivity
+NoviceBootFragment
+SplashFragment
+
+N
+UnityGuideFragment 
+UnityLabelFragment
+UnityPropListFragment
+</code></pre></li>
+<li><p>有P：</p>
+<pre><code>P
+ApproveFileInfoActivity    
+ModifyProjectRoleActivity
+ProjectMenuActivity
+ProjectApproveFragment
+
+W
+ConfirmUploadActivity  
+LoginActivity
+FirstActivity
+</code></pre></li>
+</ul>
+<p><strong>2、P不应该直接引用Context</strong></p>
+<blockquote>
+<p>最好隔离一切平台依赖，Framework或者第三方类库，如URS，TextUtils等</p>
+</blockquote>
+<pre><code>第三方库
+LoginBySmsPresenter
+LoginPresenter
+
+W
+AppUpdatePresenter
+ShowProjectVHPresenter
+
+P
+HomePresenter
+JumpToPagePresenter
+TakePhotoPresenter    
+QsPresenter
+
+N
+UploadListPresenter
+</code></pre><p>实现一个helper工具类来隔离第三方依赖库，约定只能在P中调用</p>
+<p><strong>3、Kotlin中直接将回调方法传进来，业务逻辑交给View去做是否合适？</strong></p>
+<pre><code>W
+ApprovalDetailPresenter
+FirstEntryPresenter
+PrjActionDialogPresenter
+</code></pre><p>由于这类P并未持有View的引用，具体的业务逻辑还是在View中实现，将其更名为interactor比较合适。</p>
+<p><strong>4、P的接口定义？</strong></p>
+<p>现阶段暂不考虑</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
   <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/25/Kotlin重构实践/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -3100,217 +3560,6 @@ public class NoticesMessageDTO implements MessagesAdapter.ViewModel{
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/16/代码规范检查/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="潘威">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/me.jpeg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="个人博客">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="个人博客" src="">
-    </span>
-  </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/03/16/代码规范检查/" itemprop="url">
-                  代码规范检查
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-03-16T19:03:56+08:00">
-                2017-03-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>为了保证团队内部代码风格的统一，提升代码的质量，更好的遵循标准的编写规范。必须定义一个统一的规范，在执行上前期主要由团队的老司机进行codereview，并对review出来的问题进行总结和回顾，避免后期犯类似的错误。但是这样会加大老司机的工作量，降低整个团队的工作效率，如果项目周期比较赶可能会放松对代码的要求。因此，有必要引入自动化工具来帮助我们保证代码的质量，这里主要采用两种办法：</p>
-<ul>
-<li><p><strong>coding阶段</strong>：为IDE配置统一的格式化模板，在完成开发后手动进行format。具体配置方式参见<a href="http://note.youdao.com/groupshare/?token=A0EFFF04E19246089EAFACD7A818FEF0&amp;gid=30539562" target="_blank" rel="external">Android端Code Style统一规范</a></p>
-</li>
-<li><p><strong>build阶段</strong>：使用checkstyle工具检查代码，注释、命名规范、方法长度、空格缩进等不再需要手工检查，由于标准的check过于严格，可以根据实际情况取消部分检查规则。对于不符合规范的代码，警告或者错误提示。</p>
-</li>
-</ul>
-<h1 id="Checkstyle配置"><a href="#Checkstyle配置" class="headerlink" title="Checkstyle配置"></a>Checkstyle配置</h1><p>具体的配置步骤：</p>
-<p>1、将自定义的checkstyle.xml文件放在项目/setting目录下.</p>
-<p>2、添加checkstyle任务，并配置检查项目。</p>
-<pre><code>allprojects{
-   repositories{ 
-         jcenter()
- }
- task checkstyle(type: Checkstyle) {
-       showViolations = true
-       configFile file(&quot;../settings/checkstyle.xml&quot;)
-       source &apos;src/main/java&apos;//检查Java代码
-       include &apos;**/*.java&apos;  //不检查
-       exclude &apos;**/gen/**&apos;
-       exclude &apos;**/R.java&apos;
-       exclude &apos;**/BuildConfig.java&apos;
-
-       // empty classpath
-       classpath = files()
-       ignoreFailures true     // 忽略检查失败的情况，避免gradle命令执行中止
-   }
-}
-</code></pre><p>3、在module的build.gradle中添加checkstyle插件，并声明checkstyle任务的执行条件。</p>
-<pre><code>apply plugin: &apos;checkstyle&apos;
-
-preBuild.dependsOn(&apos;checkstyle&apos;)
-assemble.dependsOn(&apos;lint&apos;)
-check.dependsOn(&apos;checkstyle&apos;)
-</code></pre><p>4、在终端中执行如下命令，可在/app/build/reports中看到生成的警示报告文件。</p>
-<pre><code>./gradlew checkstyle 
-</code></pre><h1 id="自定义xml配置文件"><a href="#自定义xml配置文件" class="headerlink" title="自定义xml配置文件"></a>自定义xml配置文件</h1><p>IDE的Code Style Format包括如下几个部分：</p>
-<ul>
-<li>Tabs and Indents</li>
-<li>Spaces</li>
-<li>Wrapping and braces</li>
-<li>Blank lines</li>
-<li>JavaDoc</li>
-<li>Arrangement</li>
-<li>Imports</li>
-<li>Code Generation</li>
-</ul>
-<p>可以直接在IntelliJ IDEA中勾选设置，然后导出配置文件，共享给团队成员。但它只能对代码的格式进行自动调整，无法检查代码的问题和错误。Checkstyle插件是在format的基础上，对代码的格式和语法进行检查和分析，包括下面几大类型：</p>
-<ul>
-<li>Javadoc Comments </li>
-<li>Naming Conventions</li>
-<li>Imports</li>
-<li>Size Violations</li>
-<li>Whitespace</li>
-<li>ModifierOrder</li>
-<li>Block Checks</li>
-<li>Coding</li>
-<li>Class Design</li>
-<li>Duplicate Code</li>
-<li>Miscellaneous</li>
-</ul>
-<p>根据项目实际情况，主要对Javadoc注释、命名规范、import语句、代码块、缩进和空行以及风格、类设计、重复代码等分析规则进行配置。<br>具体配置文件如下<a href="https://github.com/checkstyle/checkstyle/blob/master/config/checkstyle_checks.xml" target="_blank" rel="external">checkstyle.xml</a></p>
-<blockquote>
-<p>这里参照了官方提供的配置文件<a href="https://github.com/checkstyle/checkstyle/blob/master/config/checkstyle_checks.xml" target="_blank" rel="external">checkstyle_checks.xml</a>，并加以详细的注释，可根据实际需求添加或移除module。</p>
-</blockquote>
-<h1 id="自定义文件说明"><a href="#自定义文件说明" class="headerlink" title="自定义文件说明"></a>自定义文件说明</h1><p>Checkstyle配置文件通过指定modules应用到java文件。modules是树状结构，以一个名为Checker的module作为root节点，一般的checker都会包括TreeWalker子module。</p>
-<blockquote>
-<p>xml配置文件中通过module的name属性来区分module，module的Properties可以控制如何去执行这个module，每个property都有一个默认值，所有的check都有一个severity属性，用它来指定check的level。TreeWalker为每个java文件创建一个语法树，在节点之间调用submodules的Checks。</p>
-</blockquote>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -3358,7 +3607,7 @@ check.dependsOn(&apos;checkstyle&apos;)
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -3376,7 +3625,7 @@ check.dependsOn(&apos;checkstyle&apos;)
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-count">23</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -3416,7 +3665,7 @@ check.dependsOn(&apos;checkstyle&apos;)
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
