@@ -88,11 +88,11 @@
 
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="个人博客">
+<meta property="og:title" content="个人笔记">
 <meta property="og:url" content="http://yoursite.com/page/2/index.html">
-<meta property="og:site_name" content="个人博客">
+<meta property="og:site_name" content="个人笔记">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="个人博客">
+<meta name="twitter:title" content="个人笔记">
 
 
 
@@ -126,7 +126,7 @@
 
 
 
-  <title> 个人博客 </title>
+  <title> 个人笔记 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -163,7 +163,7 @@
   <div class="custom-logo-site-title">
     <a href="/"  class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <span class="site-title">个人博客</span>
+      <span class="site-title">个人笔记</span>
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
@@ -265,6 +265,483 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/28/打造一个通用Adapter/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="潘威">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/me.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="个人笔记">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="个人笔记" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/03/28/打造一个通用Adapter/" itemprop="url">
+                  打造一个通用Adapter
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-03-28T21:33:54+08:00">
+                2017-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>项目通知模块涉及到的通知类型多达三四十种，并且消息列表分散在多个页面。本文使用RecycleView展示多种布局类型，考虑到通知消息格式具有一定的相似性，所以把它做成一个通用Adapter，便于后期的扩展和维护。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>Android系统在v7包中提供了一种新的组件RecycleView，通过LayoutManager来实现过去常常使用的ListView和GridView，使用过程中重写RecycleViewAdapter的三个方法：</p>
+<blockquote>
+<p>1、首先在getItemViewType方法中返回固定的类型标识viewType。ItemView的type类型，由服务端返回的数据Model决定。</p>
+<p>2、然后在onCreateViewHolder中根据viewType参数，也就是getItemViewType的返回值来判断需要创建的ViewHolder类型。</p>
+<p>3、最后在onBindViewHolder方法中对ViewHolder的具体类型进行判断，分别为不同类型的ViewHolder进行绑定数据与逻辑处理。</p>
+</blockquote>
+<p>所以Adapter的实现代码如下：</p>
+<pre><code>    @Override
+public int getItemViewType(int position) {
+    if (mNoticesMessageDTOs != null &amp;&amp; position &lt; mNoticesMessageDTOs.size()) {
+        return mNoticesMessageDTOs.get(position).getEventType();
+    }
+}
+
+@Override
+public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    RecyclerView.ViewHolder viewHolder = null;
+    switch (viewType) {
+        ......
+        case Constants.EventType.FOLDER_CREATE:
+        case Constants.EventType.FOLDER_RESTORE:
+        case Constants.EventType.FOLDER_DELETE:
+            viewHolder = new NoticeCardVHolder(parent, mViewComponent);
+            break;
+        case Constants.EventType.DISCUSS_NEW_TOPIC:
+        case Constants.EventType.DISCUSS_NEW_COMMIT:
+        case Constants.EventType.DISCUSS_REPLY_COMMIT:
+        case Constants.EventType.DISCUSS_AT_YOU:
+            viewHolder = new NoticeLabelVHolder(parent, mViewComponent);
+            break;
+
+    }
+    return viewHolder;
+}
+
+@Override
+public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    if (holder instanceof NoticeCardVHolder) {
+        ((NoticeCardVHolder) holder).render(mNoticesMessageDTOs.get(position));
+    } else if (holder instanceof NoticeProjectVHolder) {
+        ((NoticeProjectVHolder) holder).render(mNoticesMessageDTOs.get(position));
+    } else if (holder instanceof NoticeProjectAnounceVHolder) {
+        ((NoticeProjectAnounceVHolder) holder).render(mNoticesMessageDTOs.get(position));
+    } else if (holder instanceof NoticeLabelVHolder) {
+        ((NoticeLabelVHolder) holder).render(mNoticesMessageDTOs.get(position));
+    } else if (holder instanceof NoticeProjectApproveVHolder) {
+        ((NoticeProjectApproveVHolder) holder).render(mNoticesMessageDTOs.get(position));
+    }
+}
+
+@Override
+public int getItemCount() {
+    return mNoticesMessageDTOs.size();
+}
+</code></pre><p>很明显看出，这种实现方式存在如下缺陷：</p>
+<p>1、类型检查与转换方式低效。由于在onCreateViewHolder中根据不同类型创建了不同的ViewHolder，所以onBindViewHolder方法需要针对不同类型的ViewHolder进行数据绑定与逻辑处理。</p>
+<p>2、不利于扩展和维护。数据源是从服务端获取，当需求发生变化，比如新增其他通知类型，或者Model数据结构发生变化时，需要重写以上三个方法。随着类型的逐渐增多，Adapter会越来越臃肿，变得难以维护。</p>
+<p>3、代码的重复实现。每种类型的ViewHolder单独实现事件点击、设置已读样式等。</p>
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>针对前文所提到的三点问题，从getItemViewType、onCreateViewHolder、onBindViewHolder这三个方法入手，提出以下解决思路：</p>
+<p><strong>1、实现BaseViewHolder。</strong>从不同ViewHolder中抽象出相似的功能，比如点击跳转，设置已读样式，头像的显示规则等，避免重复实现。在继承RecyclerView.ViewHolder的基础上派生出BaseViewHolder，所有ViewHolder必须继承BaseViewHolder，并在此基础上扩展。</p>
+<pre><code>abstract public class BaseVHolder extends RecyclerView.ViewHolder {
+
+    public BaseVHolder(View itemView, ViewComponent component) {
+        super(itemView);
+        if (component != null) {
+            component.inject(this);
+        }
+    }
+
+    public void render(NoticesMessageDTO noticesMessageDTO) {
+
+    }
+
+    protected void modifyLayout() {
+      ......
+    }
+
+    public CharSequence renderSpan(String text, String color, boolean isBold, boolean isDelete) {
+       ......
+    }
+
+    public void setUserImage(SimpleDraweeView mUserAvator, NoticesMessageDTO.ContentObj contentObj) {
+        ......
+    }
+
+    public void parseDeleteLine(SpannableStringBuilder operateStr) {
+        ......
+    }
+
+    //页面路由统一处理跳转事件
+    public void setOnNoticesItemClickListener(final NoticesMessageDTO noticesMessageDTO) {
+        ......
+    }
+
+    //设置item为已读样式
+    protected void setItemReaded() {
+            ......
+    }
+
+}
+</code></pre><p><strong>2、合并ViewHolder。</strong>将所有通知类型（服务端控制）按视觉样式分为五个大类，并创建五种不同的itemView，然后根据viewType实现五种ViewHolder。如下是卡片相关通知类型。</p>
+<pre><code>public class NoticeCardVHolder extends BaseVHolder {
+    @BindView(R.id.tv_user_name)
+    TextView mUserName;
+    @BindView(R.id.project_name)
+    TextView mProjectName;
+    @BindView(operate)
+    TextView mOperate;
+    @BindView(R.id.user_avator)
+    SimpleDraweeView mUserAvator;
+    @BindView(R.id.date)
+    TextView mDate;
+
+    public NoticeCardVHolder(ViewGroup parent, ViewComponent component) {
+        super(LayoutInflater.from(parent.getContext()).inflate(R.layout.notice_card_view_holder, parent, false),
+                component);
+        ButterKnife.bind(this, itemView);
+    }
+
+    public void render(NoticesMessageDTO noticesMessageDTO) {
+        ......
+    }
+
+    //文案拼接
+    private void renderOperateView(NoticesMessageDTO.ContentObj contentObj, int readYn) {
+        ......
+    }
+
+        protected void setItemReaded() {
+        ......
+    }
+}
+</code></pre><p><strong>3、BaseViewHolder作为onCreateViewHolder方法的返回值类型。</strong><br>BaseViewHolder作为ViewHolder的基类，可避免在onBindViewHolder中对ViewHolder进行类型检查与类型转换，简化了onBindViewHolder方法中的数据绑定与逻辑处理。</p>
+<p>按以上实现思路，getItemViewType 、onCreateViewHolder和onBindViewHolder方法的代码将变得相对简单。如下</p>
+<pre><code>@Override
+public int getItemViewType(int position) {
+    if (mNoticesMessageDTOs != null &amp;&amp; position &lt; mNoticesMessageDTOs.size()) {
+        return mNoticesMessageDTOs.get(position).getEventType();
+    }
+}
+
+public BaseVHolder onCreateViewHolder(ViewGroup parent, int viewType) { 
+    BaseVHolder viewHolder = null;
+    switch (viewType) {
+            ......    
+        case Constants.EventType.CARD_DELTE:
+        case Constants.EventType.CARD_RESTORE:
+        case Constants.EventType.CARD_MOVE:
+        case Constants.EventType.CARD_RENAME:
+            viewHolder = new NoticeCardVHolder(parent, mViewComponent);
+            break;
+        case Constants.EventType.DISCUSS_NEW_TOPIC:
+        case Constants.EventType.DISCUSS_NEW_COMMIT:
+        case Constants.EventType.DISCUSS_REPLY_COMMIT:
+        case Constants.EventType.DISCUSS_AT_YOU:
+            viewHolder = new NoticeLabelVHolder(parent, mViewComponent);
+            break;
+        default:
+            viewHolder = null;
+            break;
+    }
+    return viewHolder;
+}
+
+@Override
+public void onBindViewHolder(BaseVHolder holder, int position) {
+    holder.render(mNoticesMessageDTOs.get(position));
+} 
+</code></pre><p>在onBindViewHolder中不需要对ViewHolder进行任何操作，数据的绑定和逻辑处理都交给对应的ViewHolder来处理，因此每个ViewHolder可根据实际情况实现render方法。这样所有的业务逻辑全部放在ViewHolder中，如果新增一种类型只需实现对应的ViewHolder，然后在onCreateViewHolder方法中创建ViewHolder类型即可，这样Adapter会便于扩展和维护。</p>
+<h2 id="改进"><a href="#改进" class="headerlink" title="改进"></a>改进</h2><p>前面实现的Adapter只能处理通知相关类型，算不上真正的通用。如果应用场景发生变化，比如项目列表、文件记录或搜索结果列表等，此时所绑定的数据Model不再是通知类型，Adapter将无法适应这些情况。因此做了如下改造：</p>
+<p><strong>1、定义通用的viewType类型。</strong></p>
+<pre><code>/** 定义不同vholder类型 **/
+public interface VHolderType {
+    /** 通知相关 */
+    int NoticeProjectAnounce = 101;
+    int NoticeProjectApprove = 102;
+    int NoticeProject = 103;
+    int NoticeCard = 104;
+    int NoticeLabel = 105;
+    /** 搜索相关 **/
+    int SearchCardHead = 201;
+    int SearchCard = 202;
+    int SearchFile = 203;
+    int SearchFolder = 204;
+    /** 项目相关 **/
+    int ShowProject = 301;
+}
+</code></pre><p><strong>2、数据Model中增加type标识。</strong>前面介绍的viewType是由服务端控制，这里为兼容不同的数据Model，需要在本地统一配置管理，然后根据Model获得自定义viewType。</p>
+<ul>
+<li><p><strong>定义抽象接口</strong></p>
+<pre><code>public interface TypeFactory {
+    int type(NoticesMessageDTO noticesMessageDTO);
+    int type(SearchResourceDTO searchResourceDTO);
+    int type(ProjectInfoDTO projectInfoDTO);
+}
+
+//列表相关Model需实现该接口
+public interface ViewModel {
+    int type(TypeFactory typeFactory);
+}
+</code></pre></li>
+</ul>
+<ul>
+<li><strong>实现ViewModel接口。</strong>不同类型的Model以List\<viewmodel\> 的形式放在列表中。</viewmodel\></li>
+</ul>
+<pre><code>public class SearchResourceDTO implements MessagesAdapter.ViewModel{
+    ......
+    @Override
+    public int type(MessagesAdapter.TypeFactory typeFactory) {
+        return  typeFactory.type(this);
+    }
+}
+
+public class NoticesMessageDTO implements MessagesAdapter.ViewModel{
+    ......
+    @Override
+    public int type(MessagesAdapter.TypeFactory typeFactory) {
+        return typeFactory.type(this);
+    }
+}
+</code></pre><p><strong>3、配置TypeFactory，将Model数据转化为通用viewType。</strong></p>
+<pre><code>public static class TypeFactoryForList implements TypeFactory {
+    @Override
+    public int type(NoticesMessageDTO noticesMessageDTO) {
+        int viewType = 0;
+        if (noticesMessageDTO != null) {
+            switch (noticesMessageDTO.getEventType()) {
+                   ......
+
+                case Constants.EventType.PROJECT_MODIFY_NOTICE: // 公告
+                    viewType = Constants.VHolderType.NoticeProjectAnounce;
+                    break;
+                case Constants.EventType.PROJECT_MODIFY_NAME: // 项目信息更新1003
+                    viewType = Constants.VHolderType.NoticeProject;
+                    break;
+                Constants.EventType.CARD_FOLLOW_CANCEL:
+                case Constants.EventType.CARD_ADD_FOLLOW:
+                case Constants.EventType.CARD_REMOVE_FOLLOW:
+                case Constants.EventType.FILE_UPLOAD: // 文件
+                case Constants.EventType.FILE_UPDATE:
+                case Constants.EventType.FILE_DELETE:
+                case Constants.EventType.FILE_RESTORE:
+                Constants.EventType.FOLDER_UPLOAD: // 文件夹
+                case Constants.EventType.FOLDER_CREATE:
+                case Constants.EventType.FOLDER_RESTORE:
+                case Constants.EventType.FOLDER_DELETE:
+                    viewType = Constants.VHolderType.NoticeCard;
+                    break;
+                //讨论标注相关
+                case Constants.EventType.DISCUSS_NEW_TOPIC:
+                case Constants.EventType.DISCUSS_NEW_COMMIT:
+                case Constants.EventType.DISCUSS_REPLY_COMMIT:
+                case Constants.EventType.DISCUSS_AT_YOU:
+                    viewType = Constants.VHolderType.NoticeLabel;
+                    break;
+            }
+        }
+        return viewType;
+    }
+
+    public int type(SearchResourceDTO searchResourceDTO) {
+        int viewType = 0;
+        if (searchResourceDTO != null) {
+            switch (searchResourceDTO.getResType()) {
+                case Constants.SearchResultType.RES_CARD_HEAD:
+                    viewType = Constants.VHolderType.SearchCardHead;
+                    break;
+                case Constants.SearchResultType.RES_CARD:
+                    viewType = Constants.VHolderType.SearchCard;
+                    break;
+                case Constants.SearchResultType.RES_FILE:
+                    viewType = Constants.VHolderType.SearchFile;
+                    break;
+                case Constants.SearchResultType.RES_FOLDER:
+                    viewType = Constants.VHolderType.SearchFolder;
+            }
+        }
+        return viewType;
+    }
+
+    public int type(ProjectInfoDTO projectInfoDTO) {
+        return Constants.VHolderType.ShowProject;
+    }
+}
+</code></pre><p>将类型判断抽取到TypeFactoryForList中，减轻了onCreateViewHolder方法的代码量，同时便于对各种类型进行统一管理。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>经过改进后的Adapter代码如下：</p>
+<pre><code>public class MessagesAdapter extends RecyclerView.Adapter&lt;BaseVHolder&gt; {
+    private List&lt;ViewModel&gt; mMessageDTOs;
+
+    private ViewComponent mViewComponent;
+
+    public MessagesAdapter(ViewComponent component) {
+        mViewComponent = component;
+        mMessageDTOs = new ArrayList&lt;ViewModel&gt;();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mMessageDTOs.get(position).type(new TypeFactoryForList());
+    }
+
+    @Override
+    public BaseVHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        BaseVHolder viewHolder = null;
+        switch (viewType) {
+            ......
+            case Constants.VHolderType.NoticeProjectAnounce: 
+                viewHolder = new NoticeProjectAnounceVHolder(parent, mViewComponent);
+                break;
+            case Constants.VHolderType.NoticeProjectApprove:
+                viewHolder = new NoticeProjectApproveVHolder(parent, mViewComponent);
+                break;
+            case Constants.VHolderType.NoticeProject:
+                viewHolder = new NoticeProjectVHolder(parent, mViewComponent);
+                break;
+            case Constants.VHolderType.NoticeCard:
+                viewHolder = new NoticeCardVHolder(parent, mViewComponent);
+                break;
+            case Constants.VHolderType.NoticeLabel:
+                viewHolder = new NoticeLabelVHolder(parent, mViewComponent);
+                break;
+        }
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(BaseVHolder holder, int position) {
+        holder.render(mMessageDTOs.get(position));
+    }
+     ......
+}
+</code></pre><p>将原本应该在Adapter中实现的代码抽离出来，让Adapter更加简洁，更多的逻辑放在ViewHolder和TypeFactory中，数据列表的Item更加独立，甚至可以让不同Model数据混合显示。具有较强的通用性，<br>能够实现列表页面的快速复制。<br>但是还存在一些不足，比如BaseViewHolder中的render方法可能还需要扩展，才能更好的满足多Model情况下的数据绑定与逻辑处理，大家可以根据实际情况进行修改。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://developer.android.com/reference/android/support/v7/widget/RecyclerView.Adapter.html" target="_blank" rel="external">https://developer.android.com/reference/android/support/v7/widget/RecyclerView.Adapter.html</a></p>
+<p><a href="http://www.jianshu.com/p/c6a44e18badb" target="_blank" rel="external">http://www.jianshu.com/p/c6a44e18badb</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
   <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/16/代码规范检查/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -274,9 +751,9 @@
   </span>
 
   <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="个人博客">
+    <meta itemprop="name" content="个人笔记">
     <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="个人博客" src="">
+      <img style="display:none;" itemprop="url image" alt="个人笔记" src="">
     </span>
   </span>
 
@@ -485,9 +962,9 @@ check.dependsOn(&apos;checkstyle&apos;)
   </span>
 
   <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="个人博客">
+    <meta itemprop="name" content="个人笔记">
     <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="个人博客" src="">
+      <img style="display:none;" itemprop="url image" alt="个人笔记" src="">
     </span>
   </span>
 
@@ -757,9 +1234,9 @@ CharSequence styledText = Html.fromHtml(text);
   </span>
 
   <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="个人博客">
+    <meta itemprop="name" content="个人笔记">
     <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="个人博客" src="">
+      <img style="display:none;" itemprop="url image" alt="个人笔记" src="">
     </span>
   </span>
 
@@ -1224,7 +1701,7 @@ void addNewEntry(K key, V value, int hash, int index) {
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1233,7 +1710,7 @@ void addNewEntry(K key, V value, int hash, int index) {
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1242,7 +1719,7 @@ void addNewEntry(K key, V value, int hash, int index) {
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">25</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
