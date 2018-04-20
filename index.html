@@ -265,6 +265,392 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/20/版本号自动管理方案/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="潘威">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/me.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="个人笔记">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="个人笔记" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/20/版本号自动管理方案/" itemprop="url">
+                  版本号自动管理方案
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-04-20T19:47:56+08:00">
+                2018-04-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>一般APP在正式发布前会更新版本信息，就是versionCode和versionName。其中，versionCode是一个int值，随着版本的迭代持续增长，而versionName是一个用户可见的String，起到标识的作用。</p>
+<p><strong>每次版本更新都需要修改这两行代码，且手动修改容易出错。</strong></p>
+<h1 id="自动获取versionCode"><a href="#自动获取versionCode" class="headerlink" title="自动获取versionCode"></a>自动获取versionCode</h1><p>1、使用 Git 中 commit 的数量来作为版本号</p>
+<blockquote>
+<p>为了兼容以前的版本，可以加上初始版本值，比如 commitCount+2018031912</p>
+</blockquote>
+<p>2、取最近一次 commit 的时间戳</p>
+<blockquote>
+<p>为了兼容，时间格式化为 年月日时</p>
+</blockquote>
+<p>versionCode 对应 Git 的代码状态，这样可以保证versionCode只增不减。</p>
+<blockquote>
+<p>注：versionCode最大值为2147483647，可预见时间内肯定够用。</p>
+</blockquote>
+<h1 id="自动获取versionName"><a href="#自动获取versionName" class="headerlink" title="自动获取versionName"></a>自动获取versionName</h1><p>正常发布完成后，会在master分支打上Tag，那么能否直接利用这个Tag呢？答案是肯定的，比如某个版本Tag值为 v5_6_0，那么 5_6_0 就是有效信息。</p>
+<p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/edu/branch_tactics.jpeg" alt="分支管理策略"></p>
+<p>我们的发布流程是先上线然后再合回master打Tag，master 打出来还是上个版本的信息。考虑到对外主要是 release 和 hotfix分支,恰恰这两个分支名携带了我们的版本信息。</p>
+<p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/edu/branch_info.jpeg" alt="分支信息"></p>
+<p>上图可以看出，目前云课堂的分支命名策略完全可以使用脚本自动管理我们的版本号，但是分支命名需要按照特定的格式，也存在人为误差的可能,所以这个作为可选项！(每天会将分支信息推送到群里，错误的命名能够及时发现)</p>
+<p>script-git-version.gradle 已经放在壳工程目录下，附上部分代码：</p>
+<pre><code>//转成原有的格式
+def getAppVersionTime(long time = gitVersionCodeTime) {
+    return new Date(1000 * time).format(&quot;yyyyMMddHH&quot;).toInteger()
+}
+
+def getAppVersionName(def version = gitBranchName) {
+    def pattern = &quot;v(\\d+)(\\_\\d+){2}&quot;
+    def matcher = version =~ pattern
+
+    if (matcher.count &gt; 0) {
+        version = matcher[0][0].replaceAll(&quot;_&quot;, &quot;.&quot;).replace(&quot;v&quot;, &quot;&quot;)
+    } else {
+        //防止进入死循环
+        if (!version.equals(gitVersionName)) {
+            version = getAppVersionName(gitVersionName)
+        }
+    }
+    return version
+}
+</code></pre><h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>在主工程下配置：</p>
+<pre><code>apply from: &quot;$rootProject.projectDir/script-git-version.gradle&quot;
+
+android.applicationVariants.all { variant -&gt;
+    if (variant.buildType.name.equals(&apos;release&apos;)) {
+        variant.mergedFlavor.versionCode = getAppVersionTime()
+        variant.mergedFlavor.versionName = getAppVersionName()
+    }
+}
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/11/通用网络请求回调接口/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="潘威">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/me.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="个人笔记">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="个人笔记" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/11/通用网络请求回调接口/" itemprop="url">
+                  通用网络请求回调接口
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-04-11T19:39:56+08:00">
+                2018-04-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>1、上层存在对网络库的直接依赖；</p>
+<p>2、success 和 error 回调单独实现，使用上不是很友好，且不利于统一管理</p>
+<p>3、网络层保持相对独立，除了通用的异常处理，其他业务逻辑应该交给上层实现</p>
+<h1 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h1><p>1、隔离对网络库的依赖，便于替换网络库</p>
+<p>2、封装一个通用请求回调，将服务端返回的错误码和错误信息透传上来，便于上层处理</p>
+<p>3、网络层不应该有太多的业务逻辑，不应该持有上层的引用</p>
+<h1 id="原则"><a href="#原则" class="headerlink" title="原则"></a>原则</h1><p>1、接口友好、稳定、可扩展、易使用</p>
+<p>2、不对原来的逻辑造成影响</p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>开始有想过实现一个全新的回调接口，直接对 StudyRequestBase 动刀子，但考虑到影响范围广且改动大，故作罢。<br>目前只是对 Response.Listener 和 StudyErrorListenerImp 做了一层封装和转换。</p>
+<p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/edu/edu_request_callBack.png" alt="request callback"></p>
+<p>StudyRequestListenerImp 实际上提供了onSuccess 和 onError 两种回调方法，同时保留了 StudyErrorListener 中的回调，兼容老的逻辑，且预留了扩展接口，实现对StudyErrorListenerImp逻辑的完整重构。新增一个Toast开关</p>
+<p>考虑到当前项目中到处在使用 StudyErrorListenerImp ，避免维护两套逻辑，DefaultStudyRequestListenerImp 类重写了 errorListener() 方法，复用 StudyErrorListenerImp 的异常处理逻辑。</p>
+<p>新的回调方法将错误信息透传到上层（主要是服务端返回的 code 和 message），不会对具体的网络库形成依赖，实现对上层的解耦。</p>
+<p><strong>如何用?</strong></p>
+<p>虽然 StudyRequestListenerImp 和 DefaultStudyRequestListenerImp 达到了同样的效果，但是建议使用 DefaultStudyRequestListenerImp </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">    mIdReqOperation = RecomRequestManager.doGetOperationalData(new Response.Listener&lt;GetOperationResult&gt;() &#123;</div><div class="line">        @Override</div><div class="line">        public void onResponse(GetOperationResult result) &#123;</div><div class="line">            updateRecomChannelPackage(mRecomChannelPackage, result);</div><div class="line">            notifyLoadOperationDataFinish(true, mRecomChannelPackage);</div><div class="line">        &#125;</div><div class="line">    &#125;, new StudyErrorListenerImp(TAG) &#123;</div><div class="line">        @Override</div><div class="line">        public void onErrorResponse(int squence, String url, VolleyError error, boolean showToast) &#123;</div><div class="line">            super.onErrorResponse(squence, url, error, false);</div><div class="line">            notifyLoadOperationDataFinish(false, mRecomChannelPackage);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    ---------------------------------华丽的分割线--------------------</div><div class="line">    //RecomRequestManager.java</div><div class="line">    public static int doGetOperationalData(Response.Listener&lt;GetOperationResult&gt; listener,</div><div class="line">            StudyErrorListener errorListener) &#123;</div><div class="line">        GetOperationDataRequest request = new GetOperationDataRequest(listener, errorListener);</div><div class="line">        return RequestManager.getInstance().postRequest(request);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">```修改后：</div></pre></td></tr></table></figure>
+<pre><code>mIdReqOperation = RecomRequestManager.doGetOperationalData(new DefaultStudyRequestListenerImp&lt;GetOperationResult&gt;(TAG) {
+    @Override
+    public void onSuccess(GetOperationResult result) {
+        super.onSuccess(result);
+        updateRecomChannelPackage(mRecomChannelPackage, result);
+        notifyLoadOperationDataFinish(true, mRecomChannelPackage);
+    }
+
+    @Override
+    public void onError(String errorInfo) {
+        super.onError(errorInfo);
+        notifyLoadOperationDataFinish(false, mRecomChannelPackage);
+    }
+});
+
+---------------------------------华丽的分割线--------------------
+//RecomRequestManager.java
+public static int doGetOperationalData(DefaultStudyRequestListenerImp&lt;GetOperationResult&gt; listener) {
+    GetOperationDataRequest request = new GetOperationDataRequest(listener.successListener(), listener.errorListener());
+    return RequestManager.getInstance().postRequest(request);
+}
+</code></pre><p>是不是看上去更加清爽？且中间层未依赖任何第三方库！</p>
+<p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/edu/no_dependency.jpeg" alt="no dependency"></p>
+<p>StudyRequestBase 没有做任何修改，后面如果有重构的需求，在StudyRequestListenerImp 内部调整即可。</p>
+<h1 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h1><p>1、使用 StudyBaseError 统一所有异常（目前数据为空的情况还未包含进去）</p>
+<p>2、建议在迭代过程中逐步替换掉CallBack，直至完全移除 StudyErrorListenerImp</p>
+<p>3、RequestManager的统一（多个实例维护了两套逻辑，且造成性能浪费）</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
   <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/07/图框识别预研/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2603,645 +2989,6 @@ public static void initBindView(Object currentClass, View sourceView) {
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/12/InputMethodManger导致的内存泄漏问题/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="潘威">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/me.jpeg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="个人笔记">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="个人笔记" src="">
-    </span>
-  </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/06/12/InputMethodManger导致的内存泄漏问题/" itemprop="url">
-                  InputMethodManger导致的内存泄漏问题
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-12T20:33:08+08:00">
-                2017-06-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h2><p>今天使用LeakCanary检查程序，发现很多页面都存在内存泄漏，虽然各页面的引用路径不完全相同，但最终都会指向InputMethodManager，所以考虑从InputMethodManager入手。如图：<br><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/leak/leak.png" alt="leak"><br>查看代码没有发现什么问题，于是看了一下InputMethodManager的源码,下面是获取sInstance的方法</p>
-<pre><code>public static InputMethodManager getInstance() {
-    synchronized (InputMethodManager.class) {
-        if (sInstance == null) {
-            IBinder b = ServiceManager.getService(Context.INPUT_METHOD_SERVICE);
-            IInputMethodManager service = IInputMethodManager.Stub.asInterface(b);
-            sInstance = new InputMethodManager(service, Looper.getMainLooper());
-        }
-        return sInstance;
-    }
-}
-</code></pre><ul>
-<li>sInstance是一个全局单例，多个页面使用同一个InputMethodManager实例，也就是说sInstance的引用链指向新页面时，老的页面才能回收释放。</li>
-</ul>
-<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p><strong>思路：</strong></p>
-<p>1、定位InputMethodManager中具体的引用变量；</p>
-<p>2、页面onDestroy时给其置空（使用反射）。</p>
-<p>解决这个问题需要复现并结合源码进行分析，同时使用反射不免会产生一些新的bug，网上搜索看看是否有成熟的解决方案。</p>
-<p>其实这是Android的一个公开bug  <a href="https://issuetracker.google.com/issues/37043700" target="_blank" rel="external">链接</a></p>
-<p><strong>看如下描述</strong>：</p>
-<p>InputMethodManager.mServedView keeps a reference to that last focused view, until another view get focus. This prevent the part of the view hierarchy that was detached from being garbage collected, and therefore creates a memory leak. </p>
-<p>原来问题在mServedView这个变量上，它指向的就是获取焦点用于输入的view，同时这个view又持有了页面的引用。</p>
-<p>贴出大神的解决方案 <a href="https://gist.github.com/pyricau/4df64341cc978a7de414" target="_blank" rel="external">链接</a>：</p>
-<pre><code>public class IMMLeaksUtils {
-
-/**
- * Fix for https://code.google.com/p/android/issues/detail?id=171190 .
- *
- * When a view that has focus gets detached, we wait for the main thread to be idle and then
- * check if the InputMethodManager is leaking a view. If yes, we tell it that the decor view got
- * focus, which is what happens if you press home and come back from recent apps. This replaces
- * the reference to the detached view with a reference to the decor view.
- *
- * Should be called from {@link Activity#onCreate(android.os.Bundle)} )}.
- */
-public static InputMethodManager getInputMethodManager(Application application) {
-    final InputMethodManager inputMethodManager =
-            (InputMethodManager) application.getSystemService(INPUT_METHOD_SERVICE);
-
-    if (SDK_INT &lt; KITKAT || SDK_INT &gt; 23) {
-        return inputMethodManager;
-    }
-
-    final Field mServedViewField;
-    final Field mHField;
-    final Method finishInputLockedMethod;
-    final Method focusInMethod;
-    try {
-        mServedViewField = InputMethodManager.class.getDeclaredField(&quot;mServedView&quot;);
-        mServedViewField.setAccessible(true);
-        mHField = InputMethodManager.class.getDeclaredField(&quot;mH&quot;);//lock
-        mHField.setAccessible(true);
-        finishInputLockedMethod = InputMethodManager.class.getDeclaredMethod(&quot;finishInputLocked&quot;);
-        finishInputLockedMethod.setAccessible(true);
-        focusInMethod = InputMethodManager.class.getDeclaredMethod(&quot;focusIn&quot;, View.class);
-        focusInMethod.setAccessible(true);
-    } catch (NoSuchMethodException | NoSuchFieldException unexpected) {
-        Log.e(&quot;IMMLeaks&quot;, &quot;Unexpected reflection exception&quot;, unexpected);
-        return inputMethodManager;
-    }
-
-    application.registerActivityLifecycleCallbacks(new LifecycleCallbacksAdapter() {
-        @Override
-        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-            ReferenceCleaner cleaner =
-                    new ReferenceCleaner(inputMethodManager, mHField, mServedViewField, finishInputLockedMethod);
-            View rootView = activity.getWindow().getDecorView().getRootView();
-            ViewTreeObserver viewTreeObserver = rootView.getViewTreeObserver();
-            viewTreeObserver.addOnGlobalFocusChangeListener(cleaner);
-        }
-    });
-
-    return inputMethodManager;
-}
-
-/** Helper to avoid implementing all lifecycle callback methods. */
-static class LifecycleCallbacksAdapter implements Application.ActivityLifecycleCallbacks {
-    @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
-    }
-
-    @Override
-    public void onActivityStarted(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityResumed(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityPaused(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityStopped(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
-    }
-
-    @Override
-    public void onActivityDestroyed(Activity activity) {
-
-    }
-}
-
-static class ReferenceCleaner implements MessageQueue.IdleHandler, View.OnAttachStateChangeListener,
-        ViewTreeObserver.OnGlobalFocusChangeListener {
-
-    private final InputMethodManager inputMethodManager;
-    private final Field mHField;
-    private final Field mServedViewField;
-    private final Method finishInputLockedMethod;
-
-    ReferenceCleaner(InputMethodManager inputMethodManager, Field mHField, Field mServedViewField,
-            Method finishInputLockedMethod) {
-        this.inputMethodManager = inputMethodManager;
-        this.mHField = mHField;
-        this.mServedViewField = mServedViewField;
-        this.finishInputLockedMethod = finishInputLockedMethod;
-    }
-
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (newFocus == null) {
-            return;
-        }
-        if (oldFocus != null) {
-            oldFocus.removeOnAttachStateChangeListener(this);
-        }
-        Looper.myQueue().removeIdleHandler(this);
-        newFocus.addOnAttachStateChangeListener(this);
-    }
-
-    @Override
-    public void onViewAttachedToWindow(View v) {
-    }
-
-    @Override
-    public void onViewDetachedFromWindow(View v) {
-        v.removeOnAttachStateChangeListener(this);
-        Looper.myQueue().removeIdleHandler(this);
-        Looper.myQueue().addIdleHandler(this);
-    }
-
-    @Override
-    public boolean queueIdle() {
-        clearInputMethodManagerLeak();
-        return false;
-    }
-
-    private void clearInputMethodManagerLeak() {
-        try {
-            Object lock = mHField.get(inputMethodManager);
-            // This is highly dependent on the InputMethodManager implementation.
-            synchronized (lock) {
-                View servedView = (View) mServedViewField.get(inputMethodManager);
-                if (servedView != null) {
-
-                    boolean servedViewAttached = servedView.getWindowVisibility() != View.GONE;
-
-                    if (servedViewAttached) {
-                        // The view held by the IMM was replaced without a global focus change. Let&apos;s make
-                        // sure we get notified when that view detaches.
-
-                        // Avoid double registration.
-                        servedView.removeOnAttachStateChangeListener(this);
-                        servedView.addOnAttachStateChangeListener(this);
-                    } else {
-                        // servedView is not attached. InputMethodManager is being stupid!
-                        Activity activity = extractActivity(servedView.getContext());
-                        if (activity == null || activity.getWindow() == null) {
-                            // Unlikely case. Let&apos;s finish the input anyways.
-                            finishInputLockedMethod.invoke(inputMethodManager);
-                        } else {
-                            View decorView = activity.getWindow().peekDecorView();
-                            boolean windowAttached = decorView.getWindowVisibility() != View.GONE;
-                            if (!windowAttached) {
-                                finishInputLockedMethod.invoke(inputMethodManager);
-                            } else {
-                                decorView.requestFocusFromTouch();
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (IllegalAccessException | InvocationTargetException unexpected) {
-            Log.e(&quot;IMMLeaks&quot;, &quot;Unexpected reflection exception&quot;, unexpected);
-        }
-    }
-
-    private Activity extractActivity(Context context) {
-        while (true) {
-            if (context instanceof Application) {
-                return null;
-            } else if (context instanceof Activity) {
-                return (Activity) context;
-            } else if (context instanceof ContextWrapper) {
-                Context baseContext = ((ContextWrapper) context).getBaseContext();
-                // Prevent Stack Overflow.
-                if (baseContext == context) {
-                    return null;
-                }
-                context = baseContext;
-            } else {
-                return null;
-            }
-        }
-    }
-}
-}
-</code></pre><p>上面对原代码进行了细微的调整。</p>
-<p><strong>使用：</strong></p>
-<ul>
-<li><p>onCreate()中调用IMMLeaksUtils.getInputMethodManager方法获取InputMethodManager对象</p>
-</li>
-<li><p>只在有文本输入的页面调用</p>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/01/从Java到Kotlin/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="潘威">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/me.jpeg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="个人笔记">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="个人笔记" src="">
-    </span>
-  </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/06/01/从Java到Kotlin/" itemprop="url">
-                  从Java到Kotlin
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-01T19:05:06+08:00">
-                2017-06-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Kotlin是什么"><a href="#Kotlin是什么" class="headerlink" title="Kotlin是什么"></a>Kotlin是什么</h1><p>今年Google I/O 大会正式确立了Kotlin的地位，作为一名Android开发者，一定要紧跟Google的步伐。</p>
-<p>Kotlin和Java都是基于JVM的编程语言（开源），所生成的字节码高度相似。语法上和Groovy、Javascript都很类似，非常容易上手。——IntelliJ IDEA由JetBrains开发(Android Studio基于它的插件实现) ，Kotlin也是JetBrains创造，所以他们之间存在天然的联系。</p>
-<ul>
-<li><strong>与Java交互性好</strong></li>
-</ul>
-<blockquote>
-<p>Kotlin和Java的交互性很好，可以说是无缝连接。这表现在Kotlin可以自由的引用Java的代码，反之亦然。</p>
-<p>Kotlin可以现有的全部的Java框架和库Java文件可以很轻松的借助IntelliJ的插件转成Kotlin</p>
-</blockquote>
-<ul>
-<li><strong>Kotlin应用广泛</strong></li>
-</ul>
-<blockquote>
-<p>Kotlin具有跨平台性，可以用于服务器端、Android和JavaScript </p>
-<p>在Android应用开发上有着较好的支持，存在Dagger，RxKotlin,Anko等等工具库。目前一些大厂以及开源项目已经使用Kotlin，Java转Kotlin在不久的将来就会全面展开。</p>
-</blockquote>
-<h1 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h1><p><strong>1、语法上(不讲具体的语法，特性)</strong></p>
-<pre><code>//variables and constants
-var currentVersionCode = 1   //变量当前的版本号，类型Int可以根据值推断出来
-var currentVersionName : String = &quot;1.0&quot; //显式标明类型
-val APPNAME = &quot;droidyue.com&quot; //常量APPNAME 类型(String)可以根据值推断出来
-
-//methods
-fun main(args: Array&lt;String&gt;) {
-    println(args)
-}
-
-// class
-class MainActivity : AppCompatActivity() {
-
-}
-</code></pre><ul>
-<li>Kotlin支持智能类型转换。</li>
-<li>另外用var表示变量，val表示常量更加的简洁</li>
-<li>方法也很简单（使用fun缩写标识方法）</li>
-<li>类的继承和实现很简单，使用:即可</li>
-<li>Kotlin每个句子都不需要加分号;</li>
-</ul>
-<p><strong>2、简化代码，代码量大大减少。</strong></p>
-<p>Java</p>
-<pre><code>public class User {
-    private String name;
-    private String id;
-
-    public User(String name, String id) {
-        this.name = name;
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-}
-</code></pre><p>Kotlin </p>
-<pre><code>data class User(var name: String, var id: String)
-</code></pre><p> Kotlin 就会创建出一个完整的数据类，并自动生成相应的 equals、hashcode、toString 方法</p>
-<p><strong>3、便于扩展，现有类的基础上，添加一些属性或者方法，无需继承。</strong></p>
-<p>Java</p>
-<pre><code>Button button = findviewbyid(R.id.button)
-button.setOnClickListener(new View.OnClickListener() {
-    @Override public void onClick(View v) {
-        Toast.makeText(this,&quot;hello java&quot;,Toast.LENGTH_SHORT);
-    }
-});
-</code></pre><p>Kotlin</p>
-<pre><code>//支持默认参数值，减少方法重载
-fun Context.toast(message: String, duration:Int = Toast.LENGTH_LONG) {
-    Toast.makeText(this, message, duration).show()
-}
-
-button.setOnClickListener {toast(&quot;hello kotlin&quot;)}
-</code></pre><p><strong>4、安全性</strong></p>
-<p>Java</p>
-<pre><code>public void test(String string) {
-    if (string != null) {
-        char[] chars = string.toCharArray();
-        if (chars.length &gt; 10) {
-            System.out.println(((Character)chars[10]).hashCode());
-        }
-    }
-}
-</code></pre><p>Kotlin  </p>
-<pre><code>fun testNullSafeOperator(string: String?) {
-    System.out.println(string?.toCharArray()?.getOrNull(10)?.hashCode())
-}
-</code></pre><p>Java中不得不写很多防御性的代码，防止出现NullPointerException，Kotlin使用空安全符？来明确对象是否为空，否则编译无法通过。</p>
-<h1 id="怎么用"><a href="#怎么用" class="headerlink" title="怎么用"></a>怎么用</h1><p>Android Studio在3.0版本中直接集成了Kotlin插件，在3.0之下还需手动安装：</p>
-<p><strong>1、在Setting里找到Plugin选项，搜索Kotlin插件。</strong></p>
-<ul>
-<li>Kotlin：基础插件，对Kotlin的语法支持</li>
-<li><p>Kotlin Android Extensions：可以自动从XML中注入View到activity中，作为属性直接使用，省去了findViewById()和convert view的过程。</p>
-<pre><code>//导入指定布局文件中所有控件属性
-import kotlinx.android.synthetic.main.＜布局＞.*
-</code></pre><p>  ButterKnife可以扔到垃圾桶了。但存在一个问题，对于历史XML布局文件，ViewID的命名方式可能在Java代码中并不友好。解决办法：</p>
-<blockquote>
-<p>1、给布局文件中的viewID rename</p>
-<p>2、扩展Content类，自定义变量名转换映射方法</p>
-<p>3、继续使用findViewById方式。</p>
-</blockquote>
-</li>
-</ul>
-<p><strong>2、在模块的gradle下加入如下代码：</strong></p>
-<pre><code>apply plugin: &apos;kotlin-android&apos;
-apply plugin: &apos;kotlin-android-extensions&apos;
-</code></pre><p>   <strong>然后在project的gradle下加入：</strong></p>
-<pre><code>classpath &quot;org.jetbrains.kotlin:kotlin-gradle-plugin:$yourversion&quot;
-</code></pre><p><strong>3、编写Kotlin  or Java代码转换</strong></p>
-<p><strong>4、构建和发布用于 Android 的 Kotlin 应用程序</strong></p>
-<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p><strong>1、官方3.0正式版未发布，可能有坑</strong></p>
-<p><strong>2、是否带来效率的提高?</strong></p>
-<blockquote>
-<p>在生成环境中，稳定高于一切。追求新技术，一方面会给团队带来开发和维护上的学习成本，另一方面也要承担未来某些情况下因为对新技术不熟悉而产生未知问题的风险。</p>
-<p>在后面的项目中，部分小模块可以选择性使用。Kotlin的优势会慢慢展现出来的，但是需要一个较为漫长的过渡期。</p>
-</blockquote>
-<h1 id="学习资料"><a href="#学习资料" class="headerlink" title="学习资料"></a>学习资料</h1><p>官方网站<br>链接：<a href="http://kotlinlang.org/" target="_blank" rel="external">http://kotlinlang.org/</a></p>
-<p>在线代码环境<br>链接：<a href="https://try.kotlinlang.org/" target="_blank" rel="external">https://try.kotlinlang.org/</a> </p>
-<p>官方GitHub<br>链接：<a href="https://github.com/JetBrains/kotlin" target="_blank" rel="external">https://github.com/JetBrains/kotlin</a></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -3289,7 +3036,7 @@ apply plugin: &apos;kotlin-android-extensions&apos;
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -3307,7 +3054,7 @@ apply plugin: &apos;kotlin-android-extensions&apos;
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-count">29</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
