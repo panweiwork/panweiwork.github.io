@@ -1,0 +1,832 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="单元测试,依赖注入," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="前言越来越多的项目开始尝试写单元测试，关于单元测试的好处以及原理已经有很多资料了，这里不在做过多的讲述，本文主要介绍单元测试在模块化应用中的一些思考，以及如何优雅的写单元测试。
+易于测试的代码单元测试最大的痛点就是代码耦合，比如直接持有第三方库的引用、不合理的跨层调用等等，除此之外，static method、new object、singleton 都是不利于测试的代码方式，这就意味着需要 mo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何优雅的写单元测试">
+<meta property="og:url" content="http://yoursite.com/2018/10/19/如何优雅的写单元测试/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="前言越来越多的项目开始尝试写单元测试，关于单元测试的好处以及原理已经有很多资料了，这里不在做过多的讲述，本文主要介绍单元测试在模块化应用中的一些思考，以及如何优雅的写单元测试。
+易于测试的代码单元测试最大的痛点就是代码耦合，比如直接持有第三方库的引用、不合理的跨层调用等等，除此之外，static method、new object、singleton 都是不利于测试的代码方式，这就意味着需要 mo">
+<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/unitTest/dagger%E6%9E%B6%E6%9E%84%E5%9B%BE.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/unitTest/testModule.png">
+<meta property="og:updated_time" content="2018-10-19T12:55:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何优雅的写单元测试">
+<meta name="twitter:description" content="前言越来越多的项目开始尝试写单元测试，关于单元测试的好处以及原理已经有很多资料了，这里不在做过多的讲述，本文主要介绍单元测试在模块化应用中的一些思考，以及如何优雅的写单元测试。
+易于测试的代码单元测试最大的痛点就是代码耦合，比如直接持有第三方库的引用、不合理的跨层调用等等，除此之外，static method、new object、singleton 都是不利于测试的代码方式，这就意味着需要 mo">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/panweiwork/MyImage/master/unitTest/dagger%E6%9E%B6%E6%9E%84%E5%9B%BE.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/10/19/如何优雅的写单元测试/"/>
+
+
+
+
+
+  <title> 如何优雅的写单元测试 | 个人笔记 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">个人笔记</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <h1 class="site-subtitle" itemprop="description"></h1>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/19/如何优雅的写单元测试/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="潘威">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/me.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="个人笔记">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="个人笔记" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                如何优雅的写单元测试
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-19T20:54:56+08:00">
+                2018-10-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>越来越多的项目开始尝试写单元测试，关于单元测试的好处以及原理已经有很多资料了，这里不在做过多的讲述，本文主要介绍单元测试在模块化应用中的一些思考，以及如何优雅的写单元测试。</p>
+<h2 id="易于测试的代码"><a href="#易于测试的代码" class="headerlink" title="易于测试的代码"></a>易于测试的代码</h2><p>单元测试最大的痛点就是代码耦合，比如直接持有第三方库的引用、不合理的跨层调用等等，除此之外，static method、new object、singleton 都是不利于测试的代码方式，<br>这就意味着需要 mock 大量的替身类，增加了测试成本，应该尽量避免，同时使用依赖注入的方式来代替。</p>
+<h2 id="如何做好单元测试？"><a href="#如何做好单元测试？" class="headerlink" title="如何做好单元测试？"></a>如何做好单元测试？</h2><p>首先，在模块化应用中应该创建公共的单元测试模块，里面可以放一些公共的 BaseTest、Shadow Class、Utils、Junit rules 等等，在业务模块中直接 dependency 进来即可，提高写单元测试的效率。</p>
+<p>其次，明确需要测试的代码。刚开始的时候，可以只测中间逻辑层和工具类，这部分代码相对“干净”，易于测试，也是逻辑分支最集中的地方。</p>
+<p>最后，依赖注入来写单元测试。试想一下 mock 的类都能够自动完成注入，是不是很爽？这样能大大提高编写测试用例的速度，避免重复的 mock 替身类和静态方法，并提高测试代码的可读性。</p>
+<p>所以，我们引入了DI框架来做这件事情！</p>
+<p><strong>1、开发阶段</strong></p>
+<p>我们只需要在一个类似于 dependency 工厂的地方统一生产这些 dependency 对象，以及这些 dependency 的 dependency。所有需要用到这些 dependency 的地方都从这个工厂里面去获取。</p>
+<p><strong>2、测试阶段</strong> </p>
+<p>定义一个同样的 dependency 工厂，不同的是，该工厂生产的是测试所需要的 Shadow 替身，能够自动识别依赖关系，并实现自动注入！</p>
+<h2 id="Dagger2-的应用"><a href="#Dagger2-的应用" class="headerlink" title="Dagger2 的应用"></a>Dagger2 的应用</h2><p>没错！前面提到的 DI 框架就是 Dagger2，为了降低风险并减少使用成本，选择了一个模块进行尝试，Dagger2 既能实现模块内的自动注入，又能向外提供注入能力，实现跨模块的注入。</p>
+<p>在 Dagger2 里，生产这些 dependency 的工厂叫做 Module ，然而使用者并不是直接向 Module 要 dependency，而是有一个专门的“工厂管理员”，负责接收使用者的要求，然后到 Module 里面去找到相应的 dependency 对象，最后提供给使用者。这个“工厂管理员”叫做 Component。基本上，这就是 Dagger2 里面最重要的两个概念。</p>
+<p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/unitTest/dagger%E6%9E%B6%E6%9E%84%E5%9B%BE.png" alt="dagger"></p>
+<p>上图是 Dagger2 在模块之间的依赖关系，本文只介绍模块内的应用以及单元测试的实现。</p>
+<p><strong>1、创建模块级的 LibComponent 和 LibModule</strong></p>
+<p>LibModule里面定义了整个模块都要用的dependency，比如PersonalContentInstance  、Scope、 DataSource等等，所以DaggerLibComponent的存在是唯一的，在模块初始化的时候创建好，放在一个地方便于获取。</p>
+<pre><code>mInstance.mComponent = DaggerPersonalContentLibComponent.builder()
+                .personnalContentLibModule(new PersonnalContentLibModule())
+                .build();
+</code></pre><p><strong>2、创建 Frame 级别的 FrameComponent 和 FrameModule</strong></p>
+<p>FrameModule 里面定义了某个页面用到的 dependency，比如 Context、Handler、Logic、Adapter 等等，每个页面对应一个 DaggerFrameComponent，在页面的 onCreate() 里面创建好。</p>
+<p><strong>3、FrameComponent 依赖于 LibComponent</strong> </p>
+<p>在 Frame 中可以享受到 LibComponent 中全局依赖的注入，只需要在页面初始化的时候完成注入即可。</p>
+<pre><code>DaggerFrameComponent.builder()
+    .libComponent(mInstance.getComponent())
+    .frameModule(new FrameModule(this))
+    .build()
+    .injectMembers(this);
+</code></pre><p>再看看单元测试里面如何来mock dependency？<br>比如，LearnRecordDetailLogic 会调用mScope 和 mDataSource 中的方法，而 IPersonalContentScope 和 IDataSource 的实例对象是从 Dagger2 的 Component 里面获取的，怎样把 mScope 和 mDataSource 给 mock 掉呢？</p>
+<p>实际上，LearnRecordDetailLogic 向 DaggerLibComponent 获取实例调用的是 PersonnalContentLibModule 中的 provideDataSource() 和 provideScope() 方法，最后返回给 LearnRecordDetailLogic ，也就是说，真正实例化  IPersonalContentScope 和 IDataSource 的地方是在 PersonnalContentLibModule。</p>
+<pre><code>@Module
+public class PersonnalContentLibModule {
+    ......
+
+    @PerLibrary
+    @Provides
+    PersonalContentInstance providePersonalContentInstance() {
+        return PersonalContentInstance.getInstance();
+    }
+
+    @PerLibrary
+    @Provides
+    IPersonalContentScope provideScope(PersonalContentInstance instance) {
+        return instance.getScope();
+    }
+
+    @PerLibrary
+    @Provides
+    IDataSource provideDataSource(PersonalContentInstance instance) {
+        return instance.getDataSourse();
+    }
+}
+</code></pre><p>前面创建 DaggerLibComponent 的时候，给它的 builder 传递了一个 PersonnalContentLibModule 对象，如果我们传给 DaggerLibComponent 的 Module 是一个 TestModule，在它的 provide 方法被调用时，返回一个 mock 的 IPersonalContentScope 和 IDataSource，那么在测试代码中获得的，不就是 mock 后的替身对象吗？</p>
+<pre><code>public class PersonnalContentLibTestModule extends PersonnalContentLibModule {
+    ......
+
+    @Override
+    PersonalContentInstance providePersonalContentInstance() {
+        return PowerMockito.mock(PersonalContentInstance.class);
+    }
+
+    @Override
+    IPersonalContentScope provideScope(PersonalContentInstance instance) {
+        return PowerMockito.mock(IPersonalContentScope.class);
+    }
+
+    @Override
+    IDataSource provideDataSource(PersonalContentInstance instance) {
+        return PowerMockito.mock(IDataSource.class);
+    }
+}
+</code></pre><p>以上就是 Dagger2 在单元测试里的应用。在 LibModule 的基础上派生出一个 LibTestModule，除此之外，LearnRecordDetailLogic 还用到了 Context 和 Handler 对象，所以需要创建一个Frame级别的 Module，然后 override 掉 provide方法，让它返回你想要的 mock 对象。</p>
+<p><img src="https://raw.githubusercontent.com/panweiwork/MyImage/master/unitTest/testModule.png" alt="module"></p>
+<p>看一下效果，越复杂的类越能发挥出 Dagger2 的威力！</p>
+<pre><code>//使用dagger之前
+mContext = mock(Context.class);
+mHandler = mock(Handler.class);
+mDataSource = mock(IDataSource.class);
+mScope = mock(IPersonalContentScope.class);
+mContentInstance = mock(PersonalContentInstance.class);
+when(mContentInstance.getDataSourse()).thenReturn(mDataSource);
+when(mContentInstance.getScope()).thenReturn(mScope);
+mockStatic(PersonalContentInstance.class);
+when(PersonalContentInstance.getInstance()).thenReturn(mContentInstance);
+
+
+//dagger
+DaggerFrameTestComponent.builder()
+    .libComponent(ComponentUtil.getLibTestComponent)
+    .frameTestModule(new FrameTestModule())
+    .build()
+    .inject(this);
+</code></pre><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文介绍了 Dagger2 在模块内以及单元测试中的应用，DI是一种很好的开发模式，即使不做单元测试，也会让我们的代码更加简洁、干净、解耦，只不过在单元测试中发挥出了更大的威力，让很多难测的代码测试起来更加容易。</p>
+<p>最后，介绍一下 Dagger2 的配置方法：</p>
+<p>在模块的 build.gradle 中添加</p>
+<pre><code>dependencies {
+    //other dependencies
+
+    //Dagger2
+    compile &quot;com.google.dagger:dagger:${DAGGER_VERSION}&quot;
+    annotationProcessor &quot;com.google.dagger:dagger-compiler:${DAGGER_VERSION}&quot;
+}
+</code></pre><p>正常情况下,main 目录下的源代码 build 后，生成代码放在 /build/generated/source/apt/buildType 下面，但是 test 目录下的测试代码，在 compile-time 阶段却无法识别。查看 build 目录，发现存在这部分代码，但是无法正常 import 进来。所以还需要在 build.gradle 中添加如下代码：</p>
+<pre><code>android.libraryVariants.all {
+    def aptOutputDir = new File(buildDir, &quot;generated/source/apt/${it.unitTestVariant.dirName}&quot;)
+    it.unitTestVariant.addJavaSourceFoldersToModel(aptOutputDir)
+}
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/单元测试/" rel="tag"># 单元测试</a>
+          
+            <a href="/tags/依赖注入/" rel="tag"># 依赖注入</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/20/版本号自动管理方案/" rel="next" title="版本号自动管理方案">
+                <i class="fa fa-chevron-left"></i> 版本号自动管理方案
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/me.jpeg"
+               alt="潘威" />
+          <p class="site-author-name" itemprop="name">潘威</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#易于测试的代码"><span class="nav-number">2.</span> <span class="nav-text">易于测试的代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何做好单元测试？"><span class="nav-number">3.</span> <span class="nav-text">如何做好单元测试？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dagger2-的应用"><span class="nav-number">4.</span> <span class="nav-text">Dagger2 的应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">潘威</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+</body>
+</html>
